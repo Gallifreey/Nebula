@@ -103,10 +103,10 @@ onBeforeUnmount(() => {
               <img w-full h-full object-cover src="/logo.png">
             </span>
             <span class="ant-pro-form-login-title">
-              Nebula Data
+              NebulaData
             </span>
             <span class="ant-pro-form-login-desc">
-              Nebula Data（星云数据）是一个专注自动标注、数据合成、数据仿真、数据分析的数据管理平台。
+              NebulaData（星云数据）是一个专注自动标注、数据合成、数据仿真、数据分析的数据管理平台。
             </span>
           </div>
           <div class="login-lang flex-center relative z-11">
