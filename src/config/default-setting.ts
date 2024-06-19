@@ -1,9 +1,9 @@
 import type { LayoutSetting } from '~@/stores/app'
 
 export default {
-  title: 'CBEM',
+  title: 'Nebula',
   theme: 'light',
-  logo: '/logo.svg',
+  logo: '/logo.png',
   collapsed: false,
   drawerVisible: false,
   colorPrimary: '#1677FF',
@@ -24,7 +24,7 @@ export default {
   accordionMode: false,
   leftCollapsed: true,
   headerHeight: 48,
-  copyright: 'Team10 2024',
+  copyright: 'Nebula Data',
   animationName: 'slide-fadein-right',
 } as LayoutSetting
 

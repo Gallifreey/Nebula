@@ -1,14 +1,12 @@
 <script setup lang="ts">
-import { AlipayCircleFilled, LockOutlined, MobileOutlined, TaobaoCircleFilled, UserOutlined, WeiboCircleFilled } from '@ant-design/icons-vue'
+import { LockOutlined, UserOutlined } from '@ant-design/icons-vue'
 import { delayTimer } from '@v-c/utils'
 import { AxiosError } from 'axios'
-import GlobalLayoutFooter from '~/layouts/components/global-footer/index.vue'
 import { loginApi } from '~/api/common/login'
 import { getQueryParam } from '~/utils/tools'
 import type { LoginMobileParams, LoginParams } from '~@/api/common/login'
 import pageBubble from '@/utils/page-bubble'
 
-const message = useMessage()
 const notification = useNotification()
 const appStore = useAppStore()
 const { layoutSetting } = storeToRefs(appStore)
@@ -24,12 +22,11 @@ const loginModel = reactive({
 })
 const { t } = useI18nLocale()
 const formRef = shallowRef()
-const codeLoading = shallowRef(false)
 const resetCounter = 60
 const submitLoading = shallowRef(false)
 const errorAlert = shallowRef(false)
 const bubbleCanvas = ref<HTMLCanvasElement>()
-const { counter, pause, reset, resume, isActive } = useInterval(1000, {
+const { pause } = useInterval(1000, {
   controls: true,
   immediate: false,
   callback(count) {
@@ -39,21 +36,6 @@ const { counter, pause, reset, resume, isActive } = useInterval(1000, {
     }
   },
 })
-async function getCode() {
-  codeLoading.value = true
-  try {
-    await formRef.value.validate(['mobile'])
-    setTimeout(() => {
-      reset()
-      resume()
-      codeLoading.value = false
-      message.success('验证码是：123456')
-    }, 3000)
-  }
-  catch (error) {
-    codeLoading.value = false
-  }
-}
 
 async function submit() {
   submitLoading.value = true
@@ -118,13 +100,13 @@ onBeforeUnmount(() => {
         >
           <div class="flex-end">
             <span class="ant-pro-form-login-logo">
-              <img w-full h-full object-cover src="/logo.svg">
+              <img w-full h-full object-cover src="/logo.png">
             </span>
             <span class="ant-pro-form-login-title">
-              Antdv Pro
+              Nebula Data
             </span>
             <span class="ant-pro-form-login-desc">
-              {{ t("pages.layouts.userLayout.title") }}
+              Nebula Data（星云数据）是一个专注自动标注、数据合成、数据仿真、数据分析的数据管理平台。
             </span>
           </div>
           <div class="login-lang flex-center relative z-11">
@@ -159,7 +141,6 @@ onBeforeUnmount(() => {
             <a-form ref="formRef" :model="loginModel">
               <a-tabs v-model:activeKey="loginModel.type" centered>
                 <a-tab-pane key="account" :tab="t('pages.login.accountLogin.tab')" />
-                <a-tab-pane key="mobile" :tab="t('pages.login.phoneLogin.tab')" />
               </a-tabs>
               <!-- 判断是否存在error -->
               <a-alert
@@ -193,47 +174,6 @@ onBeforeUnmount(() => {
                   </a-input-password>
                 </a-form-item>
               </template>
-              <template v-if="loginModel.type === 'mobile'">
-                <a-form-item
-                  name="mobile" :rules="[
-                    { required: true, message: t('pages.login.phoneNumber.required') },
-                    {
-                      pattern: /^(86)?1([38][0-9]|4[579]|5[0-35-9]|6[6]|7[0135678]|9[89])[0-9]{8}$/,
-                      message: t('pages.login.phoneNumber.invalid'),
-                    },
-                  ]"
-                >
-                  <a-input
-                    v-model:value="loginModel.mobile" allow-clear
-                    :placeholder="t('pages.login.phoneNumber.placeholder')" size="large" @press-enter="submit"
-                  >
-                    <template #prefix>
-                      <MobileOutlined />
-                    </template>
-                  </a-input>
-                </a-form-item>
-                <a-form-item name="code" :rules="[{ required: true, message: t('pages.login.captcha.required') }]">
-                  <div flex items-center>
-                    <a-input
-                      v-model:value="loginModel.code"
-                      style="flex: 1 1 0%; transition: width 0.3s ease 0s; margin-right: 8px;" allow-clear
-                      :placeholder="t('pages.login.captcha.placeholder')" size="large" @press-enter="submit"
-                    >
-                      <template #prefix>
-                        <LockOutlined />
-                      </template>
-                    </a-input>
-                    <a-button :loading="codeLoading" :disabled="isActive" size="large" @click="getCode">
-                      <template v-if="!isActive">
-                        {{ t('pages.login.phoneLogin.getVerificationCode') }}
-                      </template>
-                      <template v-else>
-                        {{ resetCounter - counter }} {{ t('pages.getCaptchaSecondText') }}
-                      </template>
-                    </a-button>
-                  </div>
-                </a-form-item>
-              </template>
               <div class="mb-24px flex-between">
                 <a-checkbox v-model:checked="loginModel.remember">
                   {{ t('pages.login.rememberMe') }}
@@ -244,26 +184,9 @@ onBeforeUnmount(() => {
                 {{ t('pages.login.submit') }}
               </a-button>
             </a-form>
-            <a-divider>
-              <span class="text-slate-500">{{ t('pages.login.loginWith') }}</span>
-            </a-divider>
-            <div class="ant-pro-form-login-other">
-              <AlipayCircleFilled class="icon" />
-              <TaobaoCircleFilled class="icon" />
-              <WeiboCircleFilled class="icon" />
-            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div py-24px px-50px fixed bottom-0 z-11 w-screen :data-theme="layoutSetting.theme" text-14px>
-      <GlobalLayoutFooter
-        :copyright="layoutSetting.copyright" icp="鲁ICP备2023021414号-2"
-      >
-        <template #renderFooterLinks>
-          <footer-links />
-        </template>
-      </GlobalLayoutFooter>
     </div>
   </div>
 </template>

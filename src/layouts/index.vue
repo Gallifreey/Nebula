@@ -58,8 +58,6 @@ const layoutProps = computed(() =>
     <template #headerActions>
       <UserAvatar />
       <SelectLang />
-      <template v-if="!isMobile">
-      </template>
     </template>
     <template #contentPrefix>
       <MultiTab v-if="layoutSetting.multiTab" />
@@ -67,7 +65,7 @@ const layoutProps = computed(() =>
 
     <template #renderFooterLinks />
 
-    <a-watermark h-full flex flex-col flex-1 :content="!layoutSetting.watermark ? '' : layoutSetting.title ?? 'Antdv Pro'">
+    <a-watermark h-full flex flex-col flex-1 :content="!layoutSetting.watermark ? '' : layoutSetting.title ?? 'Nebula'">
       <RouterView>
         <template #default="{ Component }">
           <component :is="Component" />
