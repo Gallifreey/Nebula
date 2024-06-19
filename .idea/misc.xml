@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/nebula-register/pom.xml" />
+        <option value="$PROJECT_DIR$/cloud-test/pom.xml" />
+        <option value="$PROJECT_DIR$/cloud-gateway/pom.xml" />
+        <option value="$PROJECT_DIR$/cloud-provider/pom.xml" />
+        <option value="$PROJECT_DIR$/cloud-provider2/pom.xml" />
+        <option value="$PROJECT_DIR$/cloud-register/pom.xml" />
+        <option value="$PROJECT_DIR$/nebula-provider/pom.xml" />
+        <option value="$PROJECT_DIR$/nebula-gateway/pom.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" project-jdk-name="17" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+</project>
