@@ -30,4 +30,4 @@ function setupDirective(app: App) {
   setupLoadingDirective(app)
   setupAccessDirective(app)
 }
-start()
+start1()
