@@ -1,9 +1,0 @@
-server:
-  port: 8081
-spring:
-  application:
-    name: nebula-client-1
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8080/eureka/
