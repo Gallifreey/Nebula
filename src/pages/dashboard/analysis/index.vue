@@ -1,10 +1,9 @@
-<template>
-  <page-container>
-    <Suspense :fallback="null">
-     
-    </Suspense>
-  </page-container>
-</template>
 <script setup lang="ts">
 
 </script>
+
+<template>
+  <page-container>
+    <Suspense :fallback="null" />
+  </page-container>
+</template>

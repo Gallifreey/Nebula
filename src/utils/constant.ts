@@ -1,6 +1,6 @@
 export enum AccessEnum {
   ADMIN = 'ADMIN',
-  USER = 'USER'
+  USER = 'USER',
 }
 
 export enum DynamicLoadEnum {
