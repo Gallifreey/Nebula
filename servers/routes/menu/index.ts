@@ -21,6 +21,25 @@ const menuData = [
     locale: 'menu.dashboard.analysis',
   },
   {
+    id: 100,
+    parentId: null,
+    title: '项目空间',
+    icon: 'AppstoreOutlined',
+    component: 'RouteView',
+    redirect: '/project-space',
+    path: '/project-space',
+    name: 'ProjectSpace',
+  },
+  {
+    id: 101,
+    parentId: 100,
+    title: '项目空间',
+    icon: 'AppstoreOutlined',
+    component: '/project-space/index',
+    path: '/project-space',
+    name: 'ProjectSpace',
+  },
+  {
     id: 36,
     parentId: null,
     title: '个人页',
@@ -39,7 +58,7 @@ const menuData = [
     name: 'AccountCenter',
     component: '/account/center',
     locale: 'menu.account.center',
-  }
+  },
 ]
 
 export const accessMenuData = [
@@ -54,7 +73,7 @@ export const accessMenuData = [
   },
 ]
 
-export default eventHandler((event) => {
+export default eventHandler((event: any) => {
   const token = getHeader(event, 'Authorization')
   const username = Buffer.from(token, 'base64').toString('utf-8')
   return {
