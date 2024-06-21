@@ -25,6 +25,12 @@ const cardDataTest = reactive<ProjectSpaceCard[]>([
 const paginationTotalNumber = computed(() => {
   return cardDataTest.length
 })
+const router = useRouter()
+function handleCreateProjectSpace() {
+  router.push({
+    path: '/project-space/create',
+  })
+}
 </script>
 
 <template>
@@ -37,7 +43,7 @@ const paginationTotalNumber = computed(() => {
         <a-form name="form" :model="formState">
           <div class="form-item">
             <a-form-item>
-              <a-button type="primary">
+              <a-button type="primary" @click="handleCreateProjectSpace()">
                 <template #icon>
                   <PlusOutlined />
                 </template>

@@ -11,7 +11,14 @@ const openE = useVModel(props, 'open', emits)
 
 <template>
   <a-drawer v-model:open="openE" title="用户授权" width="40%">
-    1
+    <a-transfer>
+      <template #leftTitle>
+        全部子用户
+      </template>
+      <template #rightTitle>
+        授权子用户
+      </template>
+    </a-transfer>
   </a-drawer>
 </template>
 
