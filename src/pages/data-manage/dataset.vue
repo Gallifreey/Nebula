@@ -91,8 +91,30 @@ const testDataSet = [
     labelStatus: 50,
     name: '垃圾分类',
     groupID: 12345,
+    createTime: '2024-06-13 13:01:55',
+    totalLabels: 0,
+    size: 0,
+  },
+  {
+    version: 2,
+    id: 2122330,
+    capacity: 195,
+    importStatus: 1,
+    type: 0,
+    labelStatus: 50,
+    name: '垃圾分类2',
+    groupID: 123450,
+    createTime: '2024-06-13 13:01:55',
+    totalLabels: 0,
+    size: 0,
   },
 ]
+const router = useRouter()
+function handleCreateDataSet() {
+  router.push({
+    path: '/data-manage/create',
+  })
+}
 </script>
 
 <template>
@@ -105,7 +127,7 @@ const testDataSet = [
         <div class="form">
           <div class="btn">
             <a-form-item>
-              <a-button type="primary">
+              <a-button type="primary" @click="handleCreateDataSet()">
                 <template #icon>
                   <PlusOutlined />
                 </template>
@@ -129,21 +151,21 @@ const testDataSet = [
         </div>
       </a-form>
       <div class="table-list">
-        <div class="table-item">
-          <a-table :columns="DatasetColumn" :data-source="testDataSet" :pagination="false">
+        <div v-for="(item, index) in testDataSet" :key="index" class="table-item">
+          <a-table :columns="DatasetColumn" :data-source="[item]" :pagination="false" :style="{ marginBottom: index < testDataSet.length - 1 ? '10px' : '0' }">
             <template #title>
               <div class="info-header">
                 <div class="info-left">
                   <a-space>
                     <div class="info-title">
-                      {{ testDataSet[0].name }}
+                      {{ item.name }}
                       <a><EditOutlined /></a>
                     </div>
                     <div class="groupid">
                       <div class="form-item-title">
                         数据集组ID
                       </div>
-                      {{ testDataSet[0].groupID }}
+                      {{ item.groupID }}
                     </div>
                   </a-space>
                 </div>
@@ -165,7 +187,67 @@ const testDataSet = [
             <template #bodyCell="{ record, column }">
               <template v-if="column.dataIndex === 'version'">
                 V{{ record.version }}
-                <InfoCircleOutlined />
+                <a-popover placement="right">
+                  <template #content>
+                    <div class="content">
+                      <a-descriptions title="基本信息">
+                        <a-descriptions-item label="数据集名称" :span="1">
+                          {{ item.name }}
+                        </a-descriptions-item>
+                        <a-descriptions-item label="数据集ID" :span="2">
+                          {{ item.id }}
+                        </a-descriptions-item>
+                        <a-descriptions-item label="版本号" :span="1">
+                          V{{ item.version }}
+                        </a-descriptions-item>
+                        <a-descriptions-item label="创建时间" :span="2">
+                          {{ item.createTime }}
+                        </a-descriptions-item>
+                      </a-descriptions>
+                      <a-descriptions title="标注信息">
+                        <a-descriptions-item label="标注类型" :span="1">
+                          {{ item.type }}
+                        </a-descriptions-item>
+                        <a-descriptions-item label="标注模板" :span="2">
+                          {{ item.type }}
+                        </a-descriptions-item>
+                        <a-descriptions-item label="数据总量" :span="1">
+                          {{ item.capacity }}
+                        </a-descriptions-item>
+                        <a-descriptions-item label="已标注" :span="2">
+                          {{ item.labelStatus }} (进度 {{ Math.ceil((record.labelStatus / record.capacity) * 100) }}%)
+                        </a-descriptions-item>
+                        <a-descriptions-item label="标签个数" :span="1">
+                          {{ item.totalLabels }}
+                        </a-descriptions-item>
+                        <a-descriptions-item label="大小" :span="2">
+                          {{ item.size }}M
+                        </a-descriptions-item>
+                      </a-descriptions>
+                      <a-descriptions title="数据清洗">
+                        <template #extra>
+                          暂未做过数据清洗任务
+                        </template>
+                      </a-descriptions>
+                      <a-descriptions title="数据增强">
+                        <template #extra>
+                          暂未做过数据增强任务
+                        </template>
+                      </a-descriptions>
+                      <a-descriptions title="数据合成">
+                        <template #extra>
+                          暂未做过数据合成任务
+                        </template>
+                      </a-descriptions>
+                      <a-descriptions title="数据仿真">
+                        <template #extra>
+                          暂未做过数据仿真任务
+                        </template>
+                      </a-descriptions>
+                    </div>
+                  </template>
+                  <InfoCircleOutlined />
+                </a-popover>
               </template>
               <template v-if="column.dataIndex === 'importStatus'">
                 <a-badge status="success" :text="DataSetImportStatusMap.get(record.importStatus)" />
@@ -226,6 +308,9 @@ const testDataSet = [
 ::v-deep .ant-table-title{
   background: #f7f7f7;
 }
+::v-deep .ant-descriptions-item-label{
+  color: #797b81;
+}
 .info-header{
   display: flex;
   justify-content: space-between;
@@ -238,5 +323,8 @@ const testDataSet = [
 }
 .form-item-title::after{
   content: '：'
+}
+.content{
+  width: 600px;
 }
 </style>

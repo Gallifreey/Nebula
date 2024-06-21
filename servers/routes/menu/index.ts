@@ -66,6 +66,15 @@ const menuData = [
     name: 'DataSet',
   },
   {
+    id: 202,
+    parentId: 200,
+    title: '新建数据集',
+    component: '/data-manage/create',
+    path: '/data-manage/create',
+    name: 'DataSetCreate',
+    hideInMenu: true,
+  },
+  {
     id: 36,
     parentId: null,
     title: '个人页',

@@ -58,7 +58,8 @@ const userDrawerVisible = ref(false)
           <a-alert message="项目空间是区域下为了完成同一AI目标而进行的团队协作任务的（数据处理-模型训练-模型管理-模型服务）集合；可按工作范围或目标划分；计算资源通过分配方式授权项目使用，企业/团队成员以某种角色加入到项目中。" type="info" show-icon />
           <a-divider />
           <a-form
-            :model="formState" :label-col="{ span: 8 }"
+            :model="formState"
+            :label-col="{ span: 8 }"
             :wrapper-col="{ span: 8 }"
             :rules="rules"
           >
