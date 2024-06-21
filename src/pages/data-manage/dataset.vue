@@ -129,85 +129,87 @@ const testDataSet = [
         </div>
       </a-form>
       <div class="table-list">
-        <a-table :columns="DatasetColumn" :data-source="testDataSet">
-          <template #title>
-            <div class="info-header">
-              <div class="info-left">
-                <a-space>
-                  <div class="info-title">
-                    {{ testDataSet[0].name }}
-                    <a><EditOutlined /></a>
-                  </div>
-                  <div class="groupid">
-                    <div class="form-item-title">
-                      数据集组ID
+        <div class="table-item">
+          <a-table :columns="DatasetColumn" :data-source="testDataSet">
+            <template #title>
+              <div class="info-header">
+                <div class="info-left">
+                  <a-space>
+                    <div class="info-title">
+                      {{ testDataSet[0].name }}
+                      <a><EditOutlined /></a>
                     </div>
-                    {{ testDataSet[0].groupID }}
-                  </div>
-                </a-space>
+                    <div class="groupid">
+                      <div class="form-item-title">
+                        数据集组ID
+                      </div>
+                      {{ testDataSet[0].groupID }}
+                    </div>
+                  </a-space>
+                </div>
+                <div class="info-right">
+                  <a-space>
+                    <a-button type="text">
+                      <PlusSquareOutlined />新增版本
+                    </a-button>
+                    <a-button type="text">
+                      <AppstoreOutlined />全部版本
+                    </a-button>
+                    <a-button type="text" danger>
+                      <DeleteOutlined />删除
+                    </a-button>
+                  </a-space>
+                </div>
               </div>
-              <div class="info-right">
+            </template>
+            <template #bodyCell="{ record, column }">
+              <template v-if="column.dataIndex === 'version'">
+                V{{ record.version }}
+                <InfoCircleOutlined />
+              </template>
+              <template v-if="column.dataIndex === 'importStatus'">
+                <a-badge status="success" :text="DataSetImportStatusMap.get(record.importStatus)" />
+              </template>
+              <template v-if="column.dataIndex === 'labelStatus'">
+                {{ Math.ceil((record.labelStatus / record.capacity) * 100) }}%  ({{ record.labelStatus }}/{{ record.capacity }})
+              </template>
+              <template v-if="column.dataIndex === 'action'">
                 <a-space>
-                  <a-button type="text">
-                    <PlusSquareOutlined />新增版本
+                  <a-button type="link" size="small">
+                    查看
                   </a-button>
-                  <a-button type="text">
-                    <AppstoreOutlined />全部版本
+                  <a-button type="link" size="small">
+                    导入
                   </a-button>
-                  <a-button type="text" danger>
-                    <DeleteOutlined />删除
+                  <a-button type="link" size="small">
+                    导出
+                  </a-button>
+                  <a-button type="link" size="small">
+                    标注
+                  </a-button>
+                  <a-button type="link" size="small">
+                    <a-dropdown>
+                      <template #overlay>
+                        <a-menu>
+                          <a-menu-item>
+                            清洗
+                          </a-menu-item>
+                          <a-menu-item>
+                            删除
+                          </a-menu-item>
+                          <a-menu-item>
+                            质检报告
+                          </a-menu-item>
+                        </a-menu>
+                      </template>
+                      <EllipsisOutlined />
+                    </a-dropdown>
                   </a-button>
                 </a-space>
-              </div>
-            </div>
-          </template>
-          <template #bodyCell="{ record, column }">
-            <template v-if="column.dataIndex === 'version'">
-              V{{ record.version }}
-              <InfoCircleOutlined />
+              </template>
             </template>
-            <template v-if="column.dataIndex === 'importStatus'">
-              <a-badge status="success" :text="DataSetImportStatusMap.get(record.importStatus)" />
-            </template>
-            <template v-if="column.dataIndex === 'labelStatus'">
-              {{ Math.ceil((record.labelStatus / record.capacity) * 100) }}%  ({{ record.labelStatus }}/{{ record.capacity }})
-            </template>
-            <template v-if="column.dataIndex === 'action'">
-              <a-space>
-                <a-button type="link" size="small">
-                  查看
-                </a-button>
-                <a-button type="link" size="small">
-                  导入
-                </a-button>
-                <a-button type="link" size="small">
-                  导出
-                </a-button>
-                <a-button type="link" size="small">
-                  标注
-                </a-button>
-                <a-button type="link" size="small">
-                  <a-dropdown>
-                    <template #overlay>
-                      <a-menu>
-                        <a-menu-item>
-                          清洗
-                        </a-menu-item>
-                        <a-menu-item>
-                          删除
-                        </a-menu-item>
-                        <a-menu-item>
-                          质检报告
-                        </a-menu-item>
-                      </a-menu>
-                    </template>
-                    <EllipsisOutlined />
-                  </a-dropdown>
-                </a-button>
-              </a-space>
-            </template>
-          </template>
-        </a-table>
+          </a-table>
+        </div>
       </div>
     </a-card>
   </PageContainer>
