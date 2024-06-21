@@ -130,7 +130,7 @@ const testDataSet = [
       </a-form>
       <div class="table-list">
         <div class="table-item">
-          <a-table :columns="DatasetColumn" :data-source="testDataSet">
+          <a-table :columns="DatasetColumn" :data-source="testDataSet" :pagination="false">
             <template #title>
               <div class="info-header">
                 <div class="info-left">
