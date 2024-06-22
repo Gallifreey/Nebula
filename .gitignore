@@ -35,3 +35,4 @@ docs/.vitepress/cache
 
 types/components.d.ts
 src/assets
+.VSCodeCounter

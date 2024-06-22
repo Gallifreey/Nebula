@@ -14,4 +14,8 @@ export interface DatasetCreateFormState {
   version: number
   labelType: number
   template: number
+  labelStatus: number
+  importType: number[]
+  fileList: any[]
+  labelFormat?: number
 }

@@ -1,6 +1,9 @@
 <script lang="ts" setup>
+import { UploadOutlined } from '@ant-design/icons-vue'
+import type { UploadProps } from 'ant-design-vue'
 import LabelTypeCard from './components/LabelTypeCard.vue'
 import type { DatasetCreateFormState } from '~@/types/form'
+import { importTypeHasLabelStaticSelectData, importTypeStaticSelectData } from '~@/types/static'
 
 const stepItems = [
   {
@@ -18,6 +21,9 @@ const formState = ref<DatasetCreateFormState>({
   labelType: 0,
   version: 1,
   template: 0,
+  labelStatus: 0,
+  importType: [0],
+  fileList: [],
 })
 const labelStaticData = [
   {
@@ -41,6 +47,9 @@ const labelStaticData = [
     url: 'https://console.bce.baidu.com/easydata/app/datav/img/IMG_CLS.ab2120c7.png',
   },
 ]
+const beforeUpload: UploadProps['beforeUpload'] = () => {
+  return false
+}
 </script>
 
 <template>
@@ -95,7 +104,51 @@ const labelStaticData = [
         </a-form>
       </template>
       <template v-if="current === 1">
-        1
+        <a-form
+          :model="formState"
+          :label-col="{ span: 3 }"
+          :wrapper-col="{ span: 12 }"
+        >
+          <a-form-item name="labelStatus" label="数据标注状态">
+            <a-radio-group v-model:value="formState.labelStatus">
+              <a-radio :value="0">
+                无标注信息
+              </a-radio>
+              <a-radio :value="1">
+                有标注信息
+              </a-radio>
+            </a-radio-group>
+          </a-form-item>
+          <a-form-item name="importType" label="导入方式">
+            <a-cascader v-model:value="formState.importType" :options="formState.labelStatus ? importTypeHasLabelStaticSelectData : importTypeStaticSelectData" :allow-clear="false" />
+          </a-form-item>
+          <a-form-item v-if="formState.labelStatus === 1" name="labelFormat" label="标注格式">
+            <a-radio-group v-model:value="formState.labelFormat">
+              <a-radio :value="0">
+                默认标注格式
+              </a-radio>
+              <a-radio :value="1">
+                XML格式 (voc数据集)
+              </a-radio>
+              <a-radio :value="2">
+                JSON格式 (coco数据集)
+              </a-radio>
+            </a-radio-group>
+          </a-form-item>
+          <a-form-item name="fileList" label="上传文件">
+            <a-upload
+              v-model:file-list="formState.fileList"
+              :before-upload="beforeUpload"
+              :headers="{ authorization: 'authorization-text' }"
+              :max-count="1"
+              accept=".zip"
+            >
+              <a-button type="primary">
+                <UploadOutlined /> 上传
+              </a-button>
+            </a-upload>
+          </a-form-item>
+        </a-form>
       </template>
     </a-card>
   </PageContainer>

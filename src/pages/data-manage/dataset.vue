@@ -1,86 +1,15 @@
 <script lang="ts" setup>
 import { AppstoreOutlined, DeleteOutlined, EditOutlined, EllipsisOutlined, InfoCircleOutlined, PlusOutlined, PlusSquareOutlined } from '@ant-design/icons-vue'
-import type { CascaderProps, SelectProps } from 'ant-design-vue'
 import type { DatasetFormState } from '~@/types/form'
 import { DatasetColumn } from '~@/types/columns'
-import { DataSetImportStatusMap } from '~@/types/static'
+import { DataSetImportStatusMap, sourceStaticSelectData, typeStaticSelectData } from '~@/types/static'
 
 const formState = ref<DatasetFormState>({
   type: [],
   source: 0,
   content: '',
 })
-const sourceStaticSelectData: SelectProps['options'] = [
-  {
-    value: 0,
-    label: '我的数据集',
-  },
-  {
-    value: 1,
-    label: '公开数据集',
-  },
-]
-const typeStaticSelectData: CascaderProps['options'] = [
-  {
-    value: 0,
-    label: '图片',
-    children: [
-      {
-        value: 1,
-        label: '图片分类',
-      },
-      {
-        value: 2,
-        label: '物体检测',
-      },
-      {
-        value: 3,
-        label: '语义分割',
-      },
-      {
-        value: 4,
-        label: '3D框标注',
-      },
-      {
-        value: 5,
-        label: '关键点检测',
-      },
-    ],
-  },
-  {
-    value: 10,
-    label: '视频',
-    children: [
-      {
-        value: 11,
-        label: '视频检测',
-      },
-      {
-        value: 12,
-        label: '目标跟踪',
-      },
-    ],
-  },
-  {
-    value: 20,
-    label: '点云',
-    children: [
-      {
-        value: 21,
-        label: '点云分割',
-      },
-      {
-        value: 22,
-        label: '点云重建',
-      },
-      {
-        value: 23,
-        label: '点云混合标注',
-      },
-    ],
-  },
-]
-
+const editDSNameID = ref(-1)
 const testDataSet = [
   {
     version: 1,
@@ -113,6 +42,24 @@ const router = useRouter()
 function handleCreateDataSet() {
   router.push({
     path: '/data-manage/create',
+  })
+}
+function handleEditDSName(id: number) {
+  if (id >= 0)
+    editDSNameID.value = id
+}
+function handleConfimEditDSName() {
+  editDSNameID.value = -1
+}
+function handleCancleEditDSName() {
+  editDSNameID.value = -1
+}
+function handlePreviewDSDetails(id: number) {
+  router.push({
+    path: '/data-manage/details',
+    query: {
+      id,
+    },
   })
 }
 </script>
@@ -157,9 +104,19 @@ function handleCreateDataSet() {
               <div class="info-header">
                 <div class="info-left">
                   <a-space>
-                    <div class="info-title">
+                    <div v-if="editDSNameID !== item.id" class="info-title">
                       {{ item.name }}
-                      <a><EditOutlined /></a>
+                      <a style="margin-left: 5px" @click="handleEditDSName(item.id)"><EditOutlined /></a>
+                    </div>
+                    <div v-else class="info-title">
+                      <a-input v-model:value="item.name">
+                        <template #suffix>
+                          <a-space>
+                            <a @click="handleConfimEditDSName()">确定</a>
+                            <a @click="handleCancleEditDSName()">取消</a>
+                          </a-space>
+                        </template>
+                      </a-input>
                     </div>
                     <div class="groupid">
                       <div class="form-item-title">
@@ -257,7 +214,7 @@ function handleCreateDataSet() {
               </template>
               <template v-if="column.dataIndex === 'action'">
                 <a-space>
-                  <a-button type="link" size="small">
+                  <a-button type="link" size="small" @click="handlePreviewDSDetails(record.id)">
                     查看
                   </a-button>
                   <a-button type="link" size="small">
@@ -305,16 +262,17 @@ function handleCreateDataSet() {
 .form-item{
   width: 200px;
 }
-::v-deep .ant-table-title{
+:deep(.ant-table-title){
   background: #f7f7f7;
 }
-::v-deep .ant-descriptions-item-label{
+:deep(.ant-descriptions-item-label){
   color: #797b81;
 }
 .info-header{
   display: flex;
   justify-content: space-between;
   .info-title{
+    display: flex;
     margin-right: 10px;
   }
   .groupid{
