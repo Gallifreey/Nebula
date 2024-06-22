@@ -97,9 +97,17 @@ const menuData = [
     id: 301,
     parentId: 300,
     title: '标签组管理',
-    component: '/data-labeling/group',
+    component: '/labeling/label-group',
     path: '/data-labeling/group',
     name: 'DataLabelingGroup',
+  },
+  {
+    id: 302,
+    parentId: 300,
+    title: '在线标注',
+    component: '/labeling/online',
+    path: '/data-labeling/online',
+    name: 'DataLabelingOnline',
   },
 ]
 

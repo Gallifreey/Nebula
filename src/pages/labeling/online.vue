@@ -3,7 +3,9 @@
 </script>
 
 <template>
-  <div class="container" />
+  <PageContainer>
+    1
+  </PageContainer>
 </template>
 
 <style lang="less" scoped>
