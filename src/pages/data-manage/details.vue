@@ -1,5 +1,7 @@
 <script lang="ts" setup>
-import { SwapOutlined } from '@ant-design/icons-vue'
+import { DownOutlined, SwapOutlined } from '@ant-design/icons-vue'
+import LabelUnit from './components/LabelUnit.vue'
+import LabelImage from './components/LabelImage.vue'
 
 const activeKey = ref('1')
 </script>
@@ -34,9 +36,14 @@ const activeKey = ref('1')
               标签栏
             </div>
             <div class="btn">
-              <a-button type="primary">
-                添加标签
-              </a-button>
+              <a-space-compact block>
+                <a-button type="primary">
+                  添加标签
+                </a-button>
+                <a-button type="primary">
+                  <DownOutlined />
+                </a-button>
+              </a-space-compact>
             </div>
           </div>
           <div class="search">
@@ -52,10 +59,26 @@ const activeKey = ref('1')
                 <SwapOutlined />
               </div>
             </div>
+            <div class="label-body">
+              <div class="label-unit">
+                <LabelUnit v-for="(_, index) in [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]" :key="index" label="11" color="pink" />
+              </div>
+            </div>
           </div>
         </a-col>
         <a-col :span="16">
-          2
+          <div class="header">
+            <a-space>
+              <a-button danger>
+                删除
+              </a-button>
+            </a-space>
+          </div>
+          <div class="label-image-container">
+            <a-flex wrap="wrap" gap="small">
+              <LabelImage v-for="(_, index) in [0, 0, 0, 0, 0, 0, 0, 0, 0]" :key="index" :checked="false" image-meta="1" label="111" thumbnail="https://ts2.cn.mm.bing.net/th?id=OIP-C.mH9YLFEL5YdVxJM82mjVJQAAAA&w=316&h=197&c=8&rs=1&qlt=90&o=6&dpr=1.3&pid=3.1&rm=2" />
+            </a-flex>
+          </div>
         </a-col>
       </a-row>
     </a-card>
@@ -70,6 +93,7 @@ const activeKey = ref('1')
   .title{
     font-size: 20px;
   }
+  margin-bottom: 10px;
 }
 .search{
   height: 100px;
@@ -80,6 +104,11 @@ const activeKey = ref('1')
   .label-header{
     display: flex;
     justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .label-unit{
+    max-height: 300px;
+    overflow-y: auto;
   }
 }
 </style>
