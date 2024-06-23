@@ -16,3 +16,14 @@ export function generateUUID() {
   })
   return uuid
 }
+
+export function debounce(fn: Function, delay = 500) {
+  let timer: any | null = null
+  return (...args: any[]) => {
+    if (timer)
+      clearTimeout(timer)
+    timer = setTimeout(() => {
+      fn(...args)
+    }, delay)
+  }
+}

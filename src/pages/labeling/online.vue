@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { ArrowLeftOutlined, ArrowRightOutlined, DeleteOutlined, EditOutlined, FullscreenOutlined, MinusCircleOutlined, PlusCircleOutlined, PlusOutlined, RedoOutlined, SaveOutlined, SettingOutlined, UndoOutlined } from '@ant-design/icons-vue'
+import { ArrowLeftOutlined, ArrowRightOutlined, DeleteOutlined, DownOutlined, EditOutlined, FullscreenOutlined, MinusCircleOutlined, PlusCircleOutlined, PlusOutlined, RedoOutlined, SaveOutlined, SettingOutlined, UndoOutlined } from '@ant-design/icons-vue'
 import { h } from 'vue'
+import LabelUnit from './components/LabelUnit.vue'
 </script>
 
 <template>
@@ -76,7 +77,40 @@ import { h } from 'vue'
           </div>
         </a-col>
         <a-col :span="6">
-          2
+          <div class="header">
+            <div class="title">
+              标签栏
+            </div>
+            <div class="btn">
+              <a-space-compact block>
+                <a-button type="primary">
+                  添加标签
+                </a-button>
+                <a-button type="primary">
+                  <DownOutlined />
+                </a-button>
+              </a-space-compact>
+            </div>
+          </div>
+          <div class="search">
+            <a-input-search placeholder="请输入标签名称" />
+          </div>
+          <div class="labels">
+            <div class="label-body">
+              <div class="label-unit">
+                <LabelUnit v-for="(_, index) in [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]" :key="index" label="11" color="pink">
+                  <template #suffix>
+                    <span style="margin-right: 5px">快捷键</span>
+                    <a-avatar shape="square" size="small">
+                      <template #icon>
+                        {{ index + 1 }}
+                      </template>
+                    </a-avatar>
+                  </template>
+                </LabelUnit>
+              </div>
+            </div>
+          </div>
         </a-col>
       </a-row>
     </a-card>
@@ -107,12 +141,39 @@ import { h } from 'vue'
       width: 70px;
       height: 100px;
       border-radius: 5px;
+      box-shadow: none;
+      cursor: pointer;
+      transition: box-shadow 0.3s;
+    }
+    .image-unit:hover{
+      box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+      transition: box-shadow 0.3s;
     }
     .fix{
       display: flex;
       justify-content: center;
       align-items: center;
     }
+  }
+}
+.header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .title{
+    font-size: 20px;
+  }
+  margin-bottom: 10px;
+}
+.search{
+  height: 100px;
+  display: flex;
+  align-items: center;
+}
+.labels{
+  .label-unit{
+    max-height: 400px;
+    overflow-y: auto;
   }
 }
 </style>
