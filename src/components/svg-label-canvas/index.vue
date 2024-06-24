@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ECanvasEnum, EMouseStateEnum } from '~@/types/canvas'
+import { ECanvasEnum, EMouseStateEnum } from '~@/enums/canvas-enum'
 
 defineProps({
   height: {
@@ -16,7 +16,12 @@ const canvasStore = useCanvasStore()
 
 const senceData = reactive({
   canvas: {
-    scale: 1.0,
+    scale: 2.0,
+    rotation: 0,
+    cursor: {
+      x: 0,
+      y: 0,
+    },
     sence_center: {
       x: 0,
       y: 0,
@@ -67,8 +72,12 @@ function onSVGMouseDown(e: MouseEvent) {
   })
 }
 function onSVGMouseMove(e: MouseEvent) {
+  const { clientX, clientY } = e
+  senceData.canvas.cursor = {
+    x: canvasStore.canvasSetting.canvas.mouse.before.x + clientX - canvasStore.canvasSetting.canvas.mouse.cursor.x,
+    y: canvasStore.canvasSetting.canvas.mouse.before.y + clientY - canvasStore.canvasSetting.canvas.mouse.cursor.y,
+  }
   if (canvasStore.canvasSetting.canvas.mouse.state === EMouseStateEnum.DOWN) {
-    const { clientX, clientY } = e
     canvasStore.canvasSetting.canvas.mouse.after.x = canvasStore.canvasSetting.canvas.mouse.before.x + clientX - canvasStore.canvasSetting.canvas.mouse.cursor.x
     canvasStore.canvasSetting.canvas.mouse.after.y = canvasStore.canvasSetting.canvas.mouse.before.y + clientY - canvasStore.canvasSetting.canvas.mouse.cursor.y
     if (canvasStore.canvasSetting.canvas.action === ECanvasEnum.MOVE) {
@@ -76,6 +85,12 @@ function onSVGMouseMove(e: MouseEvent) {
       senceData.canvas.layout_center.y = canvasStore.canvasSetting.canvas.mouse.after.y
     }
   }
+}
+function onSVGMouseWheel(e: WheelEvent) {
+  const old = senceData.canvas.scale
+  senceData.canvas.scale += e.deltaY * -0.001
+  if (senceData.canvas.scale <= 0.1 || senceData.canvas.scale >= 5)
+    senceData.canvas.scale = old
 }
 </script>
 
@@ -86,14 +101,16 @@ function onSVGMouseMove(e: MouseEvent) {
     @mouseup="onSVGMouseUp"
     @mousemove="onSVGMouseMove"
     @mousedown="onSVGMouseDown"
+    @mousewheel="onSVGMouseWheel"
   >
+    <span class="point">{{ senceData.canvas.cursor }}</span>
     <svg xmlns="http://www.w3.org/2000/svg" class="canvas">
       <g
         :transform="`translate(${
           senceData.canvas.sence_center.x + senceData.canvas.layout_center.x
         },${
           senceData.canvas.sence_center.y + senceData.canvas.layout_center.y
-        })rotate(${0})scale(${senceData.canvas.scale})`"
+        })rotate(${senceData.canvas.rotation})scale(${senceData.canvas.scale})`"
       >
         <image x="0" y="0" width="500" height="300" xlink:href="https://stardust-public.oss-cn-hangzhou.aliyuncs.com/%E5%AE%98%E7%BD%91/%E6%A0%87%E6%B3%A8%E5%B7%A5%E5%85%B7%E9%A2%84%E8%A7%88/%E5%9B%BE%E7%89%87/object_detection.png?x-oss-process=image%2Fformat%2Cwebp" />
       </g>
@@ -105,6 +122,16 @@ function onSVGMouseMove(e: MouseEvent) {
 :root{
   --height: 500px;
   --width: 500px;
+}
+.container{
+  position: relative;
+  user-select: none;
+  .point{
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    color: white;
+  }
 }
 .canvas{
   height: var(--height);

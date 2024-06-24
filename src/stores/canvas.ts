@@ -1,5 +1,5 @@
 import { defaultCanvasSetting } from '~@/config/default-canvas-setting'
-import type { ECanvasEnum, EMouseStateEnum } from '~@/types/canvas'
+import type { ECanvasEnum, EMouseStateEnum } from '~@/enums/canvas-enum'
 
 export interface PointType {
   x: number
