@@ -24,6 +24,7 @@ const labelHeight = computed(() => {
 const senceData = reactive({
   state: EMouseStateEnum.UP,
   action: ECanvasEnum.IDLE,
+  layer: 0,
   origin: {
     x: 0,
     y: 0,
@@ -46,6 +47,7 @@ function onSVGMouseUp(e: MouseEvent) {
     x: clientX,
     y: clientY,
   }
+  senceData.layer = 0
 }
 function onSVGMouseDown(e: MouseEvent) {
   if (e.button === 1)
@@ -57,6 +59,7 @@ function onSVGMouseDown(e: MouseEvent) {
     x: clientX,
     y: clientY,
   }
+  senceData.layer = 999
 }
 function onSVGMouseMove(e: MouseEvent) {
   const { clientX, clientY } = e
@@ -87,6 +90,7 @@ const textCenter = computed(() => {
 
 <template>
   <g
+    :style="{ zIndex: senceData.layer }"
     :transform="`translate(${
       senceData.delta.x / 2
     },${
@@ -103,7 +107,7 @@ const textCenter = computed(() => {
         y="0"
         :width="labelLength"
         :height="labelHeight"
-        rx="3"
+        rx="2"
         :fill="color"
       />
       <text :x="textCenter.x" :y="textCenter.y" dominant-baseline="middle" text-anchor="middle" stroke-width="0.5" font-size="2">
