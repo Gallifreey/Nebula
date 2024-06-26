@@ -1,9 +1,5 @@
 import { ShapeEnum } from '~@/enums/canvas-enum'
-
-interface PointType {
-  x: number
-  y: number
-}
+import type { PointType } from '~@/types/canvas'
 
 export abstract class Shape {
   points: PointType[] = []

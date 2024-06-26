@@ -16,7 +16,7 @@ const props = defineProps({
   },
 })
 const labelLength = computed(() => {
-  return props.label.length * 12 * 0.6
+  return props.label.length * 12 * 0.4
 })
 const labelHeight = computed(() => {
   return 12
@@ -96,6 +96,7 @@ const textCenter = computed(() => {
     },${
       senceData.delta.y / 2
     })`"
+    class="shape"
     @mouseleave="onSVGMouseLeave"
     @mousedown="onSVGMouseDown"
     @mouseup="onSVGMouseUp"
@@ -110,7 +111,7 @@ const textCenter = computed(() => {
         rx="2"
         :fill="color"
       />
-      <text :x="textCenter.x" :y="textCenter.y" dominant-baseline="middle" text-anchor="middle" stroke-width="0.5" font-size="2">
+      <text :x="textCenter.x" :y="textCenter.y" dominant-baseline="middle" text-anchor="middle" stroke-width="0.5" font-size="1.5">
         {{ label }}
       </text>
     </g>
@@ -119,5 +120,7 @@ const textCenter = computed(() => {
 </template>
 
 <style lang="less" scoped>
-
+.shape{
+  cursor: move;
+}
 </style>

@@ -1,5 +1,6 @@
 import { get } from 'lodash-es'
 import router from '@/router'
+import type { PointType } from '~@/types/canvas'
 
 export function getQueryParam(param: string | string[], defaultVal = '') {
   const query = router.currentRoute.value?.query ?? {}
@@ -26,4 +27,29 @@ export function debounce(fn: Function, delay = 500) {
       fn(...args)
     }, delay)
   }
+}
+
+export function generatePointString(points: PointType[]) {
+  let str = ''
+  points.forEach((point: PointType) => {
+    str += `${point.x}, ${point.y} `
+  })
+  return str
+}
+
+export function generateBBoxByLR(topLeft: PointType, bottomRight: PointType) {
+  const w = bottomRight.x - topLeft.x
+  const h = bottomRight.y - topLeft.y
+  return [
+    topLeft,
+    {
+      x: topLeft.x + w,
+      y: topLeft.y,
+    },
+    bottomRight,
+    {
+      x: topLeft.x,
+      y: topLeft.y + h,
+    },
+  ]
 }
