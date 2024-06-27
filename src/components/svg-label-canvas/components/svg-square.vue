@@ -24,16 +24,15 @@ const props = defineProps({
     },
   },
 })
-const pointsList = ref(generateBBoxByLR(props.topLeft, props.bottomRight))
+const pointsList = reactive(generateBBoxByLR(props.topLeft, props.bottomRight))
 const points = computed(() => {
-  return generatePointString(pointsList.value)
+  return generatePointString(pointsList)
 })
-function anchorMove(e: MouseEvent, center: PointType, index: number) {
+function anchorMove(e: MouseEvent, mouse: PointType, index: number) {
   const { clientX, clientY } = e
-  console.log(pointsList.value[index].x, clientX, center.x)
-  pointsList.value[index] = {
-    x: pointsList.value[index].x + clientX - center.x,
-    y: pointsList.value[index].y + clientY - center.y,
+  pointsList[index] = {
+    x: pointsList[index].x + clientX - mouse.x,
+    y: pointsList[index].y + clientY - mouse.y,
   }
 }
 </script>

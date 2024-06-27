@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { EMouseStateEnum } from '~@/enums/canvas-enum'
 import type { PointType } from '~@/types/canvas'
 
 type DirectionType = 'rowSide' | 'columnSide' | 'leftSide' | 'rightSide'
@@ -35,20 +36,46 @@ const props = defineProps({
 })
 const centerPoint = ref(props.center)
 const r = ref(props.r)
+let state = EMouseStateEnum.IDLE
+const mouse = ref({
+  x: 0,
+  y: 0,
+})
 const directionMap: Map<DirectionType, string> = new Map([
   ['rowSide', 'ns-resize'],
   ['columnSide', 'es-resize'],
   ['leftSide', 'nwse-resize'],
   ['rightSide', 'nesw-resize'],
 ])
+function onPointDown(e: MouseEvent) {
+  mouse.value = {
+    x: e.clientX,
+    y: e.clientY,
+  }
+  state = EMouseStateEnum.DOWN
+}
+function onPointUp() {
+  mouse.value = {
+    x: 0,
+    y: 0,
+  }
+  state = EMouseStateEnum.IDLE
+}
 function onPointMove(e: MouseEvent) {
-  props.callback(e, centerPoint.value, props.index)
+  if (state !== EMouseStateEnum.DOWN)
+    return
+  props.callback(e, mouse.value, props.index)
+  mouse.value = {
+    x: e.clientX,
+    y: e.clientY,
+  }
 }
 function onPointIn() {
   r.value *= 2
 }
 function onPointLeave() {
   r.value /= 2
+  state = EMouseStateEnum.IDLE
 }
 </script>
 
@@ -62,6 +89,8 @@ function onPointLeave() {
     :cy="centerPoint.y"
     :fill="fill"
     class="anchor"
+    @mouseup="onPointUp"
+    @mousedown="onPointDown"
     @mouseenter="onPointIn"
     @mouseleave="onPointLeave"
     @mousemove="onPointMove"
