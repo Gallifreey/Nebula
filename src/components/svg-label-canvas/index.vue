@@ -118,6 +118,9 @@ function onSVGMouseWheel(e: WheelEvent) {
         <image x="0" y="0" width="500" height="300" xlink:href="https://stardust-public.oss-cn-hangzhou.aliyuncs.com/%E5%AE%98%E7%BD%91/%E6%A0%87%E6%B3%A8%E5%B7%A5%E5%85%B7%E9%A2%84%E8%A7%88/%E5%9B%BE%E7%89%87/object_detection.png?x-oss-process=image%2Fformat%2Cwebp" />
         <SVGSquare />
         <SVGSquare />
+        <SVGSquare />
+        <SVGSquare />
+        <SVGSquare />
       </g>
     </svg>
   </div>

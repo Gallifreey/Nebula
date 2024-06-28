@@ -108,7 +108,7 @@ const textCenter = computed(() => {
         y="0"
         :width="labelLength"
         :height="labelHeight"
-        rx="2"
+        rx="3"
         :fill="color"
       />
       <text :x="textCenter.x" :y="textCenter.y" dominant-baseline="middle" text-anchor="middle" stroke-width="0.5" font-size="1.5">
