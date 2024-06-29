@@ -20,4 +20,27 @@ export const defaultCanvasSetting: CanvasSetting = {
       },
     },
   },
+  entries: [
+    {
+      id: 0,
+      type: 0,
+      x: 100,
+      y: 100,
+      rotate: 0,
+      scale: 1,
+      height: 200,
+      width: 300,
+      display: true,
+      client: {
+        x: 0,
+        y: 0,
+      },
+      realBBOX: {
+        x: 100,
+        y: 100,
+        height: 100,
+        width: 100,
+      },
+    },
+  ],
 }

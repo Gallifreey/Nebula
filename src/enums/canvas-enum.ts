@@ -1,7 +1,9 @@
 export enum ECanvasEnum {
   IDLE = 'IDLE',
   MOVE = 'MOVE',
+  CANVAS_MOVE = 'CANVAS_MOVE',
   ZOOM = 'ZOOM',
+  SELECT = 'SELECT',
 }
 
 export enum EMouseStateEnum {

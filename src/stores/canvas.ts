@@ -6,6 +6,25 @@ export interface PointType {
   y: number
 }
 
+export interface BBOX extends PointType {
+  height: number
+  width: number
+}
+
+export interface EntryType {
+  id: number
+  type: number
+  x: number
+  y: number
+  rotate: number
+  scale: number
+  height: number
+  width: number
+  display: boolean
+  client: PointType
+  realBBOX: BBOX
+}
+
 export interface CanvasMouse {
   state: EMouseStateEnum
   cursor: PointType
@@ -17,6 +36,11 @@ export interface CanvasSetting {
     action: ECanvasEnum
     mouse: CanvasMouse
   }
+  templateEntry?: {
+    info: EntryType
+    index: number
+  }
+  entries: EntryType[]
 }
 
 export const useCanvasStore = defineStore('canvas', () => {
@@ -30,10 +54,17 @@ export const useCanvasStore = defineStore('canvas', () => {
   function setCanvasMouseUp(after: PointType) {
     canvasSetting.canvas.mouse.after = after
   }
+  function setCanvasTemplateEntry(entry: EntryType, index: number) {
+    canvasSetting.templateEntry = {
+      info: entry,
+      index,
+    }
+  }
   return {
     canvasSetting,
     setCanvasMouse,
     setCanvasMouseDown,
     setCanvasMouseUp,
+    setCanvasTemplateEntry,
   }
 })
