@@ -5,7 +5,7 @@ import { canUseDom, updateCSS } from '@v-c/utils'
 function formatKey(key: string, prefixCls: string) {
   return `${prefixCls}${kebabCase(key)}`
 }
-const prefixCls = '--pro-ant-'
+const prefixCls = '--nebula-'
 
 const dynamicStyleMark = `${prefixCls}${Date.now()}-${Math.random()}`
 

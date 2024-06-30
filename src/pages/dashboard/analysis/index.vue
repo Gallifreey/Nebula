@@ -5,6 +5,6 @@
 <template>
   <page-container>
     <Suspense :fallback="null" />
-    <SvgLabelCanvas />
+    <SvgLabelling />
   </page-container>
 </template>

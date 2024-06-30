@@ -54,10 +54,8 @@ function onSVGMouseUp() {
   })
 }
 function onSVGMouseDown(e: MouseEvent) {
-  if (e.button !== 1)
-    return
   const { clientX, clientY } = e
-  canvasStore.canvasSetting.canvas.action = ECanvasEnum.MOVE
+  canvasStore.canvasSetting.canvas.action = ECanvasEnum.CANVAS_MOVE
   canvasStore.setCanvasMouse({
     state: EMouseStateEnum.DOWN,
     cursor: {
@@ -150,9 +148,9 @@ function onEntryMouseDown(entry: EntryType, index: number, e: MouseEvent) {
     <svg xmlns="http://www.w3.org/2000/svg" class="canvas">
       <g
         :transform="`translate(${
-          (senceData.canvas.sence_center.x + senceData.canvas.layout_center.x) / senceData.canvas.scale
+          senceData.canvas.sence_center.x / senceData.canvas.scale + senceData.canvas.layout_center.x
         },${
-          (senceData.canvas.sence_center.y + senceData.canvas.layout_center.y) / senceData.canvas.scale
+          senceData.canvas.sence_center.y / senceData.canvas.scale + senceData.canvas.layout_center.y
         })rotate(${senceData.canvas.rotation})scale(${senceData.canvas.scale})`"
       >
         <image x="0" y="0" width="500" height="300" xlink:href="https://stardust-public.oss-cn-hangzhou.aliyuncs.com/%E5%AE%98%E7%BD%91/%E6%A0%87%E6%B3%A8%E5%B7%A5%E5%85%B7%E9%A2%84%E8%A7%88/%E5%9B%BE%E7%89%87/object_detection.png?x-oss-process=image%2Fformat%2Cwebp" />
@@ -160,10 +158,9 @@ function onEntryMouseDown(entry: EntryType, index: number, e: MouseEvent) {
           v-for="(item, index) in canvasStore.canvasSetting.entries"
           v-show="item.display"
           :key="index"
-          :transform="`translate(${item.x / senceData.canvas.scale},${item.y / senceData.canvas.scale})rotate(0)scale(1)`"
+          :transform="`translate(${item.x / senceData.canvas.scale + item.width * item.scale},${item.y / senceData.canvas.scale + item.height * item.scale})`"
         >
           <g
-            :transform="`rotate(${item.rotate},${item.realBBOX.x + item.realBBOX.width / 2},${item.realBBOX.y + item.realBBOX.height / 2}) scale(1)`"
             @mouseleave="onEntryMouseLeave(item, index, $event)"
             @mousedown="onEntryMouseDown(item, index, $event)"
             @mouseenter="onEntryMouseEnter(item, index, $event)"
