@@ -1,6 +1,8 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script lang="ts" setup>
 import { Graph } from '@antv/x6'
+import { Transform } from '@antv/x6-plugin-transform'
+import { Selection } from '@antv/x6-plugin-selection'
 
 const canvasDOM = ref()
 let graph
@@ -24,21 +26,40 @@ function render(container: HTMLElement) {
       enabled: true,
       modifiers: 'ctrl',
     },
-    highlighting: {
-      magnetAdsorbed: {
-        name: 'stroke',
-        args: {
-          attrs: {
-            fill: '#5F95FF',
-            stroke: '#5F95FF',
-          },
-        },
+    translating: {
+      restrict: {
+        x: 0,
+        y: 0,
+        width: 1005,
+        height: 671,
+      },
+    },
+    interacting: {
+      nodeMovable(view: any) {
+        return view.cell.id !== 'bg_image'
       },
     },
   })
 }
 onMounted(() => {
   graph = render(canvasDOM.value)
+  graph.use(
+    new Transform({
+      resizing: {
+        restrict: true,
+        enabled(node: any) {
+          return node.id !== 'bg_image'
+        },
+      },
+    }),
+    new Selection({
+      enabled: true,
+      multiple: true,
+      rubberband: true,
+      movable: true,
+      showNodeSelectionBox: true,
+    }),
+  )
   Graph.registerNode(
     'custom-polygon',
     {
@@ -59,7 +80,7 @@ onMounted(() => {
     },
   )
   const node = graph.createNode({
-    shape: 'custom-polygon',
+    shape: 'rect',
     position: {
       x: 100,
       y: 100,
@@ -69,8 +90,10 @@ onMounted(() => {
       width: 100,
     },
     attrs: {
-      body: {
-        refPoints: '0,10 10,0 20,10 10,20',
+      rect: {
+        'fill': 'rgba(100, 100, 255, 0.2)',
+        'stroke': 'black',
+        'strokeWidth': 1,
       },
     },
     label: '决策',
@@ -84,7 +107,10 @@ onMounted(() => {
     height: 671,
     imageUrl:
     'https://stardust-public.oss-cn-hangzhou.aliyuncs.com/%E5%AE%98%E7%BD%91/%E6%A0%87%E6%B3%A8%E5%B7%A5%E5%85%B7%E9%A2%84%E8%A7%88/%E5%9B%BE%E7%89%87/object_detection.png?x-oss-process=image%2Fformat%2Cwebp',
+    zIndex: -1,
+    id: 'bg_image',
   })
+  graph.centerContent()
 })
 </script>
 
