@@ -1,3 +1,4 @@
+import type { PointType } from './canvas'
 import { defaultHistorySetting } from '~@/config/default-history-setting'
 import type { HistoryType, entryType } from '~@/types/history'
 
@@ -28,6 +29,12 @@ export const useHistoryStore = defineStore('history', () => {
     })
     return null
   }
+  function isLabelling() {
+    return setting.labelling
+  }
+  function setSelecionPos(pos: PointType, type: 'start' | 'end') {
+    setting.selectionPos[type] = pos
+  }
   return {
     setting,
     push,
@@ -35,5 +42,7 @@ export const useHistoryStore = defineStore('history', () => {
     getSize,
     getByIndex,
     getByID,
+    isLabelling,
+    setSelecionPos,
   }
 })
