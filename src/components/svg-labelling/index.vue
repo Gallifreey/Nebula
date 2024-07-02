@@ -15,6 +15,7 @@ const menuPos = ref<PointType>({
   x: 0,
   y: 0,
 })
+
 let graph: Graph
 function render(container: HTMLElement) {
   return new Graph({
@@ -200,7 +201,6 @@ onMounted(() => {
     zIndex: -1,
     id: 'bg_image',
   })
-  graph.centerContent()
 })
 </script>
 

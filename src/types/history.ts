@@ -1,6 +1,8 @@
 import type { PointType } from './canvas'
 
-export interface BBOX extends PointType {
+export interface BBOX extends PointType, SizeType {}
+
+export interface SizeType {
   height: number
   width: number
 }
@@ -40,4 +42,7 @@ export type entryType = BBOXEntry | KeyPointsEntry | SegmentEntry | SolidEntry |
 
 export interface HistoryType {
   entries: entryType[]
+  clicked: boolean
+  popover: boolean
+  menuPos: PointType
 }
