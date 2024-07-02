@@ -3,9 +3,19 @@
 import { Graph } from '@antv/x6'
 import { Transform } from '@antv/x6-plugin-transform'
 import { Selection } from '@antv/x6-plugin-selection'
+import { History } from '@antv/x6-plugin-history'
+import { Keyboard } from '@antv/x6-plugin-keyboard'
+import type { PointType } from '~@/types/canvas'
 
 const canvasDOM = ref()
-let graph
+const popover = ref(false)
+const clicked = ref(false)
+const stack: Array<[string, any]> = []
+const menuPos = ref<PointType>({
+  x: 0,
+  y: 0,
+})
+let graph: Graph
 function render(container: HTMLElement) {
   return new Graph({
     container,
@@ -43,6 +53,67 @@ function render(container: HTMLElement) {
 }
 onMounted(() => {
   graph = render(canvasDOM.value)
+  graph.on('node:click', ({ view }) => {
+    if (view.cell.isNode() && view.cell.id !== 'bg_image') {
+      clicked.value = true
+      const pos = graph.localToGraph(view.cell.getBBox())
+      const bbox = view.container.getBoundingClientRect()
+      popover.value = true
+      menuPos.value = {
+        x: pos.x + bbox.width + 5,
+        y: pos.y,
+      }
+    }
+    else {
+      clicked.value = false
+      popover.value = false
+    }
+  })
+  graph.on('node:resizing', () => {
+    popover.value = false
+  })
+  graph.on('node:moved', ({ view }) => {
+    if (clicked.value && view.cell.isNode() && view.cell.id !== 'bg_image') {
+      const pos = graph.localToGraph(view.cell.getBBox())
+      const bbox = view.container.getBoundingClientRect()
+      popover.value = true
+      menuPos.value = {
+        x: pos.x + bbox.width + 5,
+        y: pos.y,
+      }
+    }
+    else {
+      popover.value = false
+    }
+  })
+  graph.on('node:resized', ({ view }) => {
+    if (view.cell.isNode() && view.cell.id !== 'bg_image') {
+      const pos = graph.localToGraph(view.cell.getBBox())
+      const bbox = view.container.getBoundingClientRect()
+      popover.value = true
+      menuPos.value = {
+        x: pos.x + bbox.width + 5,
+        y: pos.y,
+      }
+    }
+    else {
+      popover.value = false
+    }
+  })
+  graph.on('node:mouseenter', ({ node }) => {
+    if (node && node.id !== 'bg_image') {
+      stack.push(['rect/stroke', node.getAttrs().rect.stroke])
+      stack.push(['rect/strokeWidth', node.getAttrs().rect.strokeWidth])
+      node.attr('rect/stroke', 'blue')
+      node.attr('rect/strokeWidth', 2)
+    }
+  })
+  graph.on('node:mouseleave', ({ node }) => {
+    if (node && node.id !== 'bg_image') {
+      node.attr(stack[0][0], stack[0][1])
+      node.attr(stack[1][0], stack[1][1])
+    }
+  })
   graph.use(
     new Transform({
       resizing: {
@@ -59,7 +130,20 @@ onMounted(() => {
       movable: true,
       showNodeSelectionBox: true,
     }),
+    new History({
+      enabled: true,
+    }),
+    new Keyboard({
+      enabled: true,
+    }),
   )
+  graph.bindKey('ctrl+z', () => {
+    console.log(graph.canRedo())
+    graph.undo()
+  })
+  graph.bindKey('ctrl+y', () => {
+    graph.redo()
+  })
   Graph.registerNode(
     'custom-polygon',
     {
@@ -91,12 +175,18 @@ onMounted(() => {
     },
     attrs: {
       rect: {
-        'fill': 'rgba(100, 100, 255, 0.2)',
+        'fill': 'rgba(100, 100, 255, 0.5)',
         'stroke': 'black',
         'strokeWidth': 1,
       },
+      text: {
+        'fontSize': 14,
+        'fill': 'white',
+        'textAnchor': 'middle',
+        'textVerticalAnchor': 'middle',
+        'text': 'node',
+      },
     },
-    label: '决策',
   })
   graph.addNode(node)
   graph.addNode({
@@ -115,12 +205,55 @@ onMounted(() => {
 </script>
 
 <template>
-  <div ref="canvasDOM" class="container" />
+  <div class="canvas">
+    <div ref="canvasDOM" class="container" />
+    <div
+      v-if="popover"
+      class="popover"
+      :style="{
+        top: `${menuPos.y}px`,
+        left: `${menuPos.x}px`,
+      }"
+    >
+      <div class="header">
+        111
+      </div>
+      <div class="content">
+        111
+      </div>
+    </div>
+  </div>
 </template>
 
 <style lang="less" scoped>
+.canvas{
+  position: relative;
+}
 .container{
   height: 500px;
   width: 1000px;
+}
+.popover{
+  position: absolute;
+  height: 150px;
+  width: 300px;
+  z-index: 999;
+  background: black;
+  display: flex;
+  flex-direction: column;
+  border-radius: 5px;
+  .header{
+    height: 50px;
+    text-align: center;
+    background: rgb(26, 30, 41);
+    color: white;
+    border-radius: 5px 5px 0 0;
+  }
+  .content{
+    height: 150px;
+    background: #293043;
+    color: white;
+    border-radius: 0 0 5px 5px;
+  }
 }
 </style>
