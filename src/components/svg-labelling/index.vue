@@ -2,6 +2,7 @@
 <script lang="ts" setup>
 import type { Graph } from '@antv/x6'
 import { graphInit, switchToNext } from './utils/handler'
+import labelMenu from './components/label-menu.vue'
 
 const canvasDOM = ref()
 const history = useHistoryStore()
@@ -47,21 +48,7 @@ onMounted(() => {
 <template>
   <div class="canvas">
     <div ref="canvasDOM" class="container" />
-    <div
-      v-if="history.setting.popover"
-      class="popover"
-      :style="{
-        top: `${history.setting.menuPos.y}px`,
-        left: `${history.setting.menuPos.x}px`,
-      }"
-    >
-      <div class="header">
-        111
-      </div>
-      <div class="content">
-        111
-      </div>
-    </div>
+    <labelMenu />
   </div>
 </template>
 

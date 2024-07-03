@@ -34,3 +34,11 @@ export const ColorArray = [
   '#ffffff',
   '#000000',
 ]
+
+export const LabelPopoverTitle = [
+  '2D-Box',
+  'point',
+  'segment',
+  '3D-Box',
+  'line',
+]

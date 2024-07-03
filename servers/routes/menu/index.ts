@@ -109,6 +109,23 @@ const menuData = [
     path: '/data-labeling/online',
     name: 'DataLabelingOnline',
   },
+  {
+    id: 400,
+    parentId: null,
+    title: '数据仿真',
+    icon: 'RobotOutlined',
+    component: 'RouteView',
+    path: '/simulation/index',
+    name: 'Simulation',
+  },
+  {
+    id: 403,
+    parentId: 400,
+    title: '仿真任务',
+    component: '/simulation/index',
+    path: '/simulation/task',
+    name: 'SimulationTask',
+  },
 ]
 
 export const accessMenuData = [
