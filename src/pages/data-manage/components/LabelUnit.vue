@@ -1,23 +1,13 @@
 <script lang="ts" setup>
 import { EditOutlined, EllipsisOutlined } from '@ant-design/icons-vue'
+import type { Label } from '~@/types/structure'
 
-const props = defineProps({
-  color: {
-    type: String,
+defineProps({
+  meta: {
+    type: Object as PropType<Label>,
     required: true,
-  },
-  label: {
-    type: String,
-    required: true,
-  },
-  total: {
-    type: Number,
-    default: 0,
   },
 })
-const emits = defineEmits(['update:color', 'update:label'])
-const colorE = useVModel(props, 'color', emits)
-const labelE = useVModel(props, 'label', emits)
 const hovered = ref(false)
 const edited = ref(false)
 </script>
@@ -25,22 +15,18 @@ const edited = ref(false)
 <template>
   <div
     class="container" :style="{
-      borderLeft: `7px solid ${color}`,
+      borderLeft: `7px solid ${meta.color}`,
     }"
     @mouseenter="hovered = true"
     @mouseleave="hovered = false"
   >
-    <div v-if="!edited" class="label">
-      {{ label }}
+    <div class="label">
+      {{ meta.name }}
     </div>
-    <div v-else class="label">
-      <a-input v-model:value="colorE" type="color" style="width: 45px;" />
-      <a-input v-model:value="labelE" style="margin-left: 5px" />
+    <div v-if="!hovered" class="total">
+      {{ meta.capacity }}
     </div>
-    <div v-if="!hovered && !edited" class="total">
-      {{ total }}
-    </div>
-    <div v-else-if="hovered && !edited" class="total">
+    <div v-else-if="hovered" class="total">
       <a-space>
         <a-button type="text" @click="edited = true">
           <EditOutlined />
@@ -48,12 +34,6 @@ const edited = ref(false)
         <a-button type="text">
           <EllipsisOutlined />
         </a-button>
-      </a-space>
-    </div>
-    <div v-else class="total">
-      <a-space>
-        <a>确定</a>
-        <a>取消</a>
       </a-space>
     </div>
   </div>

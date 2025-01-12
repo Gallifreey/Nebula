@@ -1,24 +1,50 @@
 <script lang="ts" setup>
-import { DownOutlined, SwapOutlined } from '@ant-design/icons-vue'
+import { SwapOutlined } from '@ant-design/icons-vue'
 import LabelUnit from './components/LabelUnit.vue'
 import LabelImage from './components/LabelImage.vue'
-import { getDataSetDetailsApi } from '~@/api/data-manage/dataset'
+import { addNewLabelApi, getDataSetDetailsApi } from '~@/api/data-manage/dataset'
+import type { LabelCreateFormState } from '~@/types/form'
+import { RESPONSE_CODE } from '~@/types/static'
 
 const router = useRoute()
 const id = router.query.id
+const open = ref(false)
 const activeKey = ref('1')
-onMounted(async () => {
+const detials = ref()
+const formRef = ref()
+const formState = ref<LabelCreateFormState>({
+  name: `label ${Math.floor(Math.random() * 10000).toString()}`,
+  color: 'white',
+})
+async function handleDataSetDetailsView() {
   if (typeof id === 'string') {
     const dsid = Number.parseInt(id, 10)
     if (!Number.isNaN(dsid))
-      await getDataSetDetailsApi(dsid, 'classification')
-    else
-      console.error('Invalid id: id is not a valid number')
+      detials.value = (await getDataSetDetailsApi(dsid, 'classification')).data
+    else console.error('Invalid id: id is not a valid number')
   }
   else {
     console.error('Invalid id: id is not a string')
   }
-})
+}
+function openModal() {
+  open.value = true
+}
+function closeModal() {
+  open.value = false
+  formState.value = {
+    name: `label ${Math.floor(Math.random() * 10000).toString()}`,
+    color: 'white',
+  }
+}
+function handleAddNewLabel() {
+  formRef.value.validate().then(async () => {
+    const code = (await addNewLabelApi(formState.value)).code
+    if (code === RESPONSE_CODE.OK)
+      open.value = false
+  }).catch(() => {})
+}
+onMounted(() => handleDataSetDetailsView())
 </script>
 
 <template>
@@ -52,11 +78,8 @@ onMounted(async () => {
             </div>
             <div class="btn">
               <a-space-compact block>
-                <a-button type="primary">
+                <a-button type="primary" @click="openModal">
                   添加标签
-                </a-button>
-                <a-button type="primary">
-                  <DownOutlined />
                 </a-button>
               </a-space-compact>
             </div>
@@ -76,7 +99,7 @@ onMounted(async () => {
             </div>
             <div class="label-body">
               <div class="label-unit">
-                <LabelUnit v-for="(_, index) in [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]" :key="index" label="11" color="pink" />
+                <LabelUnit v-for="(label, index) in detials?.labels" :key="index" :meta="label" />
               </div>
             </div>
           </div>
@@ -91,12 +114,32 @@ onMounted(async () => {
           </div>
           <div class="label-image-container">
             <a-flex wrap="wrap" gap="small">
-              <LabelImage v-for="(_, index) in [0, 0, 0, 0, 0, 0, 0, 0, 0]" :key="index" :checked="false" image-meta="1" label="111" thumbnail="https://ts2.cn.mm.bing.net/th?id=OIP-C.mH9YLFEL5YdVxJM82mjVJQAAAA&w=316&h=197&c=8&rs=1&qlt=90&o=6&dpr=1.3&pid=3.1&rm=2" />
+              <LabelImage v-for="(image, index) in detials?.images" :key="index" :pid="image.id" :checked="false" :name="image.name" :thumbnail="image.thumbnail" />
             </a-flex>
           </div>
         </a-col>
       </a-row>
     </a-card>
+    <a-modal v-model:open="open" title="添加新标签" :keyboard="false" :mask-closable="false" :destroy-on-close="true" :closable="false" @ok="handleAddNewLabel" @cancel="closeModal">
+      <a-form
+        ref="formRef"
+        :model="formState"
+        :label-col="{ span: 7 }"
+        :wrapper-col="{ span: 12 }"
+      >
+        <a-form-item
+          name="name" label="标签名称" :rules="[{
+            required: true,
+            message: '请输入标签名称',
+          }]"
+        >
+          <a-input v-model:value="formState.name" />
+        </a-form-item>
+        <a-form-item name="name" label="标签颜色">
+          <a-input v-model:value="formState.color" type="color" style="width: 40px" />
+        </a-form-item>
+      </a-form>
+    </a-modal>
   </PageContainer>
 </template>
 

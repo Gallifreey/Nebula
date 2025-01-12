@@ -4,6 +4,7 @@ import type { DatasetFormState } from '~@/types/form'
 import { DatasetColumn } from '~@/types/columns'
 import { DataSetImportStatusMap, sourceStaticSelectData, typeStaticSelectData } from '~@/types/static'
 import { getDataSetApi } from '~@/api/data-manage/dataset'
+import { findLabelByValue } from '~@/utils/tools'
 import type { DatasetInfo } from '~@/types/structure'
 
 const formState = ref<DatasetFormState>({
@@ -119,7 +120,7 @@ onMounted(() => handleDataSetInfoView())
                       </a-descriptions>
                       <a-descriptions title="标注信息">
                         <a-descriptions-item label="标注类型" :span="1">
-                          {{ item.type }}
+                          {{ findLabelByValue(typeStaticSelectData, item.type) }}
                         </a-descriptions-item>
                         <a-descriptions-item label="标注模板" :span="2">
                           {{ item.type }}
@@ -161,6 +162,9 @@ onMounted(() => handleDataSetInfoView())
                   </template>
                   <InfoCircleOutlined />
                 </a-popover>
+              </template>
+              <template v-if="column.dataIndex === 'type'">
+                {{ findLabelByValue(typeStaticSelectData, item.type) }}
               </template>
               <template v-if="column.dataIndex === 'importStatus'">
                 <a-badge status="success" :text="DataSetImportStatusMap.get(record.importStatus)" />

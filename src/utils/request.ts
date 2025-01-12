@@ -1,9 +1,11 @@
 import type { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import axios from 'axios'
+import { message } from 'ant-design-vue'
 import { AxiosLoading } from './loading'
 import { STORAGE_AUTHORIZE_KEY, useAuthorization } from '~/composables/authorization'
 import { ContentTypeEnum, RequestEnum } from '~#/http-enum'
 import router from '~/router'
+import { RESPONSE_CODE } from '~@/types/static'
 
 export interface ResponseBody<T = any> {
   code: number
@@ -47,6 +49,10 @@ async function requestHandler(config: InternalAxiosRequestConfig & RequestConfig
 }
 
 function responseHandler(response: any): ResponseBody<any> | AxiosResponse<any> | Promise<any> | any {
+  if (response.data.code === RESPONSE_CODE.OK && response.data.msg !== '')
+    message.success(response.data.msg)
+  else if (response.data.code !== RESPONSE_CODE.OK && response.data.msg !== '')
+    message.error(response.data.msg)
   return response.data
 }
 

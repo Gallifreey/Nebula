@@ -53,6 +53,7 @@ export const sourceStaticSelectData: SelectProps['options'] = [
     label: '公开数据集',
   },
 ]
+
 export const typeStaticSelectData: CascaderProps['options'] = [
   {
     value: 0,
@@ -69,3 +70,9 @@ export const typeStaticSelectData: CascaderProps['options'] = [
     ],
   },
 ]
+
+export enum RESPONSE_CODE {
+  OK = 200,
+  CREATE_FAILED = 400,
+  SERVER_ERROR = 401,
+}

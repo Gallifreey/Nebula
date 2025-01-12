@@ -3,7 +3,7 @@ import { UploadOutlined } from '@ant-design/icons-vue'
 import type { UploadProps } from 'ant-design-vue'
 import LabelTypeCard from './components/LabelTypeCard.vue'
 import type { DatasetCreateFormState } from '~@/types/form'
-import { importTypeHasLabelStaticSelectData, importTypeStaticSelectData } from '~@/types/static'
+import { RESPONSE_CODE, importTypeHasLabelStaticSelectData, importTypeStaticSelectData } from '~@/types/static'
 import { dsCreateApi } from '~@/api/data-manage/dataset'
 
 const stepItems = [
@@ -14,8 +14,11 @@ const stepItems = [
     title: '导入数据',
   },
 ]
+const formRef1 = ref()
+const formRef2 = ref()
 const current = ref(0)
 const currentSelected = ref(0)
+const router = useRouter()
 const formState = ref<DatasetCreateFormState>({
   name: '',
   dataType: 0,
@@ -39,11 +42,23 @@ const labelStaticData = [
 const beforeUpload: UploadProps['beforeUpload'] = () => {
   return false
 }
-const nextStep = () => current.value++
+function nextStep() {
+  if (current.value === 0) {
+    formRef1.value.validate().then(() => {
+      current.value++
+    }).catch(() => {})
+  }
+}
 const prevStep = () => current.value--
 async function handleCreate() {
-  const res = await dsCreateApi(formState.value)
-  console.log(res)
+  formRef2.value.validate().then(async () => {
+    const code = (await dsCreateApi(formState.value)).code
+    if (code === RESPONSE_CODE.OK) {
+      router.push({
+        path: '/data-manage/dataset',
+      })
+    }
+  }).catch(() => {})
 }
 </script>
 
@@ -53,6 +68,7 @@ async function handleCreate() {
     <a-card :title="stepItems[current].title">
       <template v-if="current === 0">
         <a-form
+          ref="formRef1"
           :model="formState"
           :label-col="{ span: 3 }"
           :wrapper-col="{ span: 20 }"
@@ -94,6 +110,7 @@ async function handleCreate() {
       </template>
       <template v-if="current === 1">
         <a-form
+          ref="formRef2"
           :model="formState"
           :label-col="{ span: 3 }"
           :wrapper-col="{ span: 12 }"

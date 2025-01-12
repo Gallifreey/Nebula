@@ -1,17 +1,18 @@
 <script lang="ts" setup>
 import { EditOutlined, FullscreenOutlined } from '@ant-design/icons-vue'
 import { h } from 'vue'
+import { getSourceImageApi } from '~@/api/data-manage/dataset'
 
 const props = defineProps({
-  label: {
+  pid: {
+    type: Number,
+    required: true,
+  },
+  name: {
     type: String,
     required: true,
   },
   thumbnail: {
-    type: String,
-    required: true,
-  },
-  imageMeta: {
     type: String,
     required: true,
   },
@@ -24,28 +25,49 @@ const props = defineProps({
 
 const emits = defineEmits(['update:checked'])
 const hovered = ref(false)
+const url = ref('')
 const checkedE = useVModel(props, 'checked', emits)
+const visible = ref<boolean>(false)
+function setVisible(value: boolean): void {
+  if (value)
+    handleGetSourceImage()
+  visible.value = value
+}
+async function handleGetSourceImage() {
+  const u = (await getSourceImageApi(props.pid)).data
+  if (u)
+    url.value = u.url
+}
 </script>
 
 <template>
   <div class="container" @mouseenter="hovered = true" @mouseleave="hovered = false">
     <div class="checkbox">
-      <a-checkbox v-model:checked="checkedE" />
+      <a-checkbox v-model:checked="checkedE" disabled />
     </div>
     <div class="thumbnail">
       <img :src="thumbnail">
     </div>
     <div class="info">
       <div class="label">
-        {{ label }}
+        {{ name }}
       </div>
       <div v-if="hovered" class="btn">
         <a-space>
           <a-button :icon="h(EditOutlined)" type="text" size="small" />
-          <a-button :icon="h(FullscreenOutlined)" type="text" size="small" />
+          <a-button :icon="h(FullscreenOutlined)" type="text" size="small" @click="() => setVisible(true)" />
         </a-space>
       </div>
     </div>
+    <a-image
+      :width="200"
+      :style="{ display: 'none' }"
+      :preview="{
+        visible,
+        onVisibleChange: setVisible,
+      }"
+      :src="url"
+    />
   </div>
 </template>
 

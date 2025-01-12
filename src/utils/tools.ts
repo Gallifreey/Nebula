@@ -73,3 +73,17 @@ export function fullWindow(dom: string) {
   else if (maxViewDom.webkitRequestFullScreen)
     maxViewDom.webkitRequestFullScreen()
 }
+
+export function findLabelByValue(data: any, value: number) {
+  for (const option of data) {
+    if (option.value === value)
+      return option.label
+    if (option.children) {
+      for (const child of option.children) {
+        if (child.value === value)
+          return child.label
+      }
+    }
+  }
+  return null
+}

@@ -10,6 +10,7 @@ export interface DatasetInfo {
   createTime: string
   totalLabels: number
   size: number
+  source: number
 }
 
 export interface Label {
@@ -37,7 +38,7 @@ export type ImageType = 'classification' | 'detection'
 
 export interface Image<T extends ImageType> {
   id: number
-  path: string
+  name: string
   thumbnail: string
   type: T
   labelData: T extends 'classification' ? ImageClassificationLabel : ObjectDetectionLabel[]

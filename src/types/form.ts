@@ -19,3 +19,8 @@ export interface DatasetCreateFormState {
   fileList: any[]
   labelFormat?: number
 }
+
+export interface LabelCreateFormState {
+  name: string
+  color: string
+}
