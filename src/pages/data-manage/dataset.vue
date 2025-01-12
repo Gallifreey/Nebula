@@ -1,58 +1,23 @@
 <script lang="ts" setup>
-import { AppstoreOutlined, DeleteOutlined, EditOutlined, EllipsisOutlined, InfoCircleOutlined, PlusOutlined, PlusSquareOutlined } from '@ant-design/icons-vue'
+import { DeleteOutlined, EllipsisOutlined, InfoCircleOutlined, PlusOutlined } from '@ant-design/icons-vue'
 import type { DatasetFormState } from '~@/types/form'
 import { DatasetColumn } from '~@/types/columns'
 import { DataSetImportStatusMap, sourceStaticSelectData, typeStaticSelectData } from '~@/types/static'
+import { getDataSetApi } from '~@/api/data-manage/dataset'
+import type { DatasetInfo } from '~@/types/structure'
 
 const formState = ref<DatasetFormState>({
   type: [],
   source: 0,
   content: '',
 })
-const editDSNameID = ref(-1)
-const testDataSet = [
-  {
-    version: 1,
-    id: 212233,
-    capacity: 95,
-    importStatus: 0,
-    type: 0,
-    labelStatus: 50,
-    name: '垃圾分类',
-    groupID: 12345,
-    createTime: '2024-06-13 13:01:55',
-    totalLabels: 0,
-    size: 0,
-  },
-  {
-    version: 2,
-    id: 2122330,
-    capacity: 195,
-    importStatus: 1,
-    type: 0,
-    labelStatus: 50,
-    name: '垃圾分类2',
-    groupID: 123450,
-    createTime: '2024-06-13 13:01:55',
-    totalLabels: 0,
-    size: 0,
-  },
-]
+const loading = ref(true)
+const testDataSet = ref<DatasetInfo[]>([])
 const router = useRouter()
 function handleCreateDataSet() {
   router.push({
     path: '/data-manage/create',
   })
-}
-function handleEditDSName(id: number) {
-  if (id >= 0)
-    editDSNameID.value = id
-}
-function handleConfimEditDSName() {
-  editDSNameID.value = -1
-}
-function handleCancleEditDSName() {
-  editDSNameID.value = -1
 }
 function handlePreviewDSDetails(id: number) {
   router.push({
@@ -62,12 +27,20 @@ function handlePreviewDSDetails(id: number) {
     },
   })
 }
+async function handleDataSetInfoView() {
+  const data = await getDataSetApi(0)
+  if (data.data) {
+    testDataSet.value = data.data
+    loading.value = false
+  }
+}
+onMounted(() => handleDataSetInfoView())
 </script>
 
 <template>
   <PageContainer>
     <template #content>
-      平台支持统一纳管自训练模型的数据集，并支持自主版本迭代、数据查看、导入导出和删除等操作。
+      平台支持统一纳管自训练模型的数据集，并支持数据查看、导入导出和删除等操作。
     </template>
     <a-card>
       <a-form :model="formState">
@@ -99,24 +72,13 @@ function handlePreviewDSDetails(id: number) {
       </a-form>
       <div class="table-list">
         <div v-for="(item, index) in testDataSet" :key="index" class="table-item">
-          <a-table :columns="DatasetColumn" :data-source="[item]" :pagination="false" :style="{ marginBottom: index < testDataSet.length - 1 ? '10px' : '0' }">
+          <a-table :loading="loading" :columns="DatasetColumn" :data-source="[item]" :pagination="false" :style="{ marginBottom: index < testDataSet.length - 1 ? '10px' : '0' }">
             <template #title>
               <div class="info-header">
                 <div class="info-left">
                   <a-space>
-                    <div v-if="editDSNameID !== item.id" class="info-title">
+                    <div class="info-title">
                       {{ item.name }}
-                      <a style="margin-left: 5px" @click="handleEditDSName(item.id)"><EditOutlined /></a>
-                    </div>
-                    <div v-else class="info-title">
-                      <a-input v-model:value="item.name">
-                        <template #suffix>
-                          <a-space>
-                            <a @click="handleConfimEditDSName()">确定</a>
-                            <a @click="handleCancleEditDSName()">取消</a>
-                          </a-space>
-                        </template>
-                      </a-input>
                     </div>
                     <div class="groupid">
                       <div class="form-item-title">
@@ -128,12 +90,6 @@ function handlePreviewDSDetails(id: number) {
                 </div>
                 <div class="info-right">
                   <a-space>
-                    <a-button type="text">
-                      <PlusSquareOutlined />新增版本
-                    </a-button>
-                    <a-button type="text">
-                      <AppstoreOutlined />全部版本
-                    </a-button>
                     <a-button type="text" danger>
                       <DeleteOutlined />删除
                     </a-button>
@@ -234,9 +190,6 @@ function handlePreviewDSDetails(id: number) {
                             清洗
                           </a-menu-item>
                           <a-menu-item>
-                            删除
-                          </a-menu-item>
-                          <a-menu-item>
                             质检报告
                           </a-menu-item>
                         </a-menu>
@@ -272,6 +225,8 @@ function handlePreviewDSDetails(id: number) {
   display: flex;
   justify-content: space-between;
   .info-title{
+    font-weight: bold;
+    width: 5rem;
     display: flex;
     margin-right: 10px;
   }

@@ -2,8 +2,23 @@
 import { DownOutlined, SwapOutlined } from '@ant-design/icons-vue'
 import LabelUnit from './components/LabelUnit.vue'
 import LabelImage from './components/LabelImage.vue'
+import { getDataSetDetailsApi } from '~@/api/data-manage/dataset'
 
+const router = useRoute()
+const id = router.query.id
 const activeKey = ref('1')
+onMounted(async () => {
+  if (typeof id === 'string') {
+    const dsid = Number.parseInt(id, 10)
+    if (!Number.isNaN(dsid))
+      await getDataSetDetailsApi(dsid, 'classification')
+    else
+      console.error('Invalid id: id is not a valid number')
+  }
+  else {
+    console.error('Invalid id: id is not a string')
+  }
+})
 </script>
 
 <template>

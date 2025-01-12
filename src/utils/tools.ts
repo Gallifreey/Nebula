@@ -58,3 +58,18 @@ export function hexToRgba(hex: string, opacity: number) {
   return `rgba(${Number.parseInt(`0x${hex.slice(1, 3)}`)},${Number.parseInt(`0x${hex.slice(3, 5)}`)},${
            Number.parseInt(`0x${hex.slice(5, 7)}`)},${opacity})`
 }
+
+export function fullWindow(dom: string) {
+  const maxViewDom: any = document.getElementById(dom)
+  if (maxViewDom.requestFullscreen)
+    maxViewDom.requestFullscreen()
+
+  else if (maxViewDom.msRequestFullscreen)
+    maxViewDom.msRequestFullscreen()
+
+  else if (maxViewDom.mozRequestFullScreen)
+    maxViewDom.mozRequestFullScreen()
+
+  else if (maxViewDom.webkitRequestFullScreen)
+    maxViewDom.webkitRequestFullScreen()
+}

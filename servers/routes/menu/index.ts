@@ -1,3 +1,5 @@
+import { eventHandler, getHeader } from 'h3'
+
 const menuData = [
   {
     id: 1,
@@ -121,10 +123,18 @@ const menuData = [
   {
     id: 403,
     parentId: 400,
-    title: '仿真任务',
+    title: '自动驾驶场景仿真',
     component: '/simulation/index',
-    path: '/simulation/task',
-    name: 'SimulationTask',
+    path: '/simulation/ai_drive',
+    name: 'SimulationAIDrive',
+  },
+  {
+    id: 404,
+    parentId: 400,
+    title: '图片数据合成',
+    component: '/simulation/index',
+    path: '/simulation/diffusion',
+    name: 'Simulationdiffusion',
   },
 ]
 

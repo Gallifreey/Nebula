@@ -21,20 +21,8 @@ export const importTypeStaticSelectData: CascaderProps['options'] = [
     ],
   },
   {
-    value: 5,
-    label: '分享链接导入',
-  },
-  {
-    value: 6,
+    value: 3,
     label: '平台数据集',
-  },
-  {
-    value: 7,
-    label: '公开数据集',
-  },
-  {
-    value: 8,
-    label: '数据源采集',
   },
 ]
 
@@ -50,16 +38,8 @@ export const importTypeHasLabelStaticSelectData: CascaderProps['options'] = [
     ],
   },
   {
-    value: 5,
-    label: '分享链接导入',
-  },
-  {
-    value: 6,
+    value: 2,
     label: '平台数据集',
-  },
-  {
-    value: 7,
-    label: '公开数据集',
   },
 ]
 
@@ -85,50 +65,6 @@ export const typeStaticSelectData: CascaderProps['options'] = [
       {
         value: 2,
         label: '物体检测',
-      },
-      {
-        value: 3,
-        label: '语义分割',
-      },
-      {
-        value: 4,
-        label: '3D框标注',
-      },
-      {
-        value: 5,
-        label: '关键点检测',
-      },
-    ],
-  },
-  {
-    value: 10,
-    label: '视频',
-    children: [
-      {
-        value: 11,
-        label: '视频检测',
-      },
-      {
-        value: 12,
-        label: '目标跟踪',
-      },
-    ],
-  },
-  {
-    value: 20,
-    label: '点云',
-    children: [
-      {
-        value: 21,
-        label: '点云分割',
-      },
-      {
-        value: 22,
-        label: '点云重建',
-      },
-      {
-        value: 23,
-        label: '点云混合标注',
       },
     ],
   },

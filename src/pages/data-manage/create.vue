@@ -4,6 +4,7 @@ import type { UploadProps } from 'ant-design-vue'
 import LabelTypeCard from './components/LabelTypeCard.vue'
 import type { DatasetCreateFormState } from '~@/types/form'
 import { importTypeHasLabelStaticSelectData, importTypeStaticSelectData } from '~@/types/static'
+import { dsCreateApi } from '~@/api/data-manage/dataset'
 
 const stepItems = [
   {
@@ -13,7 +14,7 @@ const stepItems = [
     title: '导入数据',
   },
 ]
-const current = ref(1)
+const current = ref(0)
 const currentSelected = ref(0)
 const formState = ref<DatasetCreateFormState>({
   name: '',
@@ -27,28 +28,22 @@ const formState = ref<DatasetCreateFormState>({
 })
 const labelStaticData = [
   {
-    label: '已',
+    label: '图像分类',
     url: 'https://console.bce.baidu.com/easydata/app/datav/img/IMG_CLS.ab2120c7.png',
   },
   {
-    label: '已',
-    url: 'https://console.bce.baidu.com/easydata/app/datav/img/IMG_CLS.ab2120c7.png',
-  },
-  {
-    label: '已',
-    url: 'https://console.bce.baidu.com/easydata/app/datav/img/IMG_CLS.ab2120c7.png',
-  },
-  {
-    label: '已',
-    url: 'https://console.bce.baidu.com/easydata/app/datav/img/IMG_CLS.ab2120c7.png',
-  },
-  {
-    label: '已',
+    label: '2D-box',
     url: 'https://console.bce.baidu.com/easydata/app/datav/img/IMG_CLS.ab2120c7.png',
   },
 ]
 const beforeUpload: UploadProps['beforeUpload'] = () => {
   return false
+}
+const nextStep = () => current.value++
+const prevStep = () => current.value--
+async function handleCreate() {
+  const res = await dsCreateApi(formState.value)
+  console.log(res)
 }
 </script>
 
@@ -74,12 +69,6 @@ const beforeUpload: UploadProps['beforeUpload'] = () => {
             <a-radio-group v-model:value="formState.dataType">
               <a-radio-button :value="0">
                 图像
-              </a-radio-button>
-              <a-radio-button :value="1">
-                视频
-              </a-radio-button>
-              <a-radio-button :value="2">
-                点云
               </a-radio-button>
             </a-radio-group>
           </a-form-item>
@@ -114,9 +103,6 @@ const beforeUpload: UploadProps['beforeUpload'] = () => {
               <a-radio :value="0">
                 无标注信息
               </a-radio>
-              <a-radio :value="1">
-                有标注信息
-              </a-radio>
             </a-radio-group>
           </a-form-item>
           <a-form-item name="importType" label="导入方式">
@@ -150,6 +136,17 @@ const beforeUpload: UploadProps['beforeUpload'] = () => {
           </a-form-item>
         </a-form>
       </template>
+      <div class="bottom-btn-bar">
+        <a-button v-show="current >= 1" type="primary" style="margin-right: 16px;" @click="prevStep">
+          上一步
+        </a-button>
+        <a-button v-show="current < 1" type="primary" style="margin-right: 16px;" @click="nextStep">
+          下一步
+        </a-button>
+        <a-button v-show="current === 1" @click="handleCreate">
+          创建数据集
+        </a-button>
+      </div>
     </a-card>
   </PageContainer>
 </template>
@@ -159,5 +156,8 @@ const beforeUpload: UploadProps['beforeUpload'] = () => {
   padding-left: 20%;
   padding-right: 20%;
   margin-bottom: 24px;
+}
+.bottom-btn-bar{
+  text-align: center;
 }
 </style>
