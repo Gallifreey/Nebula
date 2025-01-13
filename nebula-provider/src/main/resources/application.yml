@@ -1,9 +1,24 @@
 server:
   port: 8081
 spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/nebula
+    username: root
+    password: 1234
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  servlet:
+    multipart:
+      max-file-size: 1024MB
+      max-request-size: 1024MB
   application:
     name: nebula-client-1
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8080/eureka/
+      defaultZone: http://localhost:8761/eureka/
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
