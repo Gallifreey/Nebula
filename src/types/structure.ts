@@ -44,7 +44,15 @@ export interface Image<T extends ImageType> {
   labelData?: T extends 'classification' ? ImageClassificationLabel : ObjectDetectionLabel[]
 }
 
-export interface ImageDataSetDetails<T extends ImageType> {
-  labels: Label[]
-  images: Image<T>[]
+export interface ImageDataShortDetails {
+  labels: {
+    id: number
+    name: string
+    color: string
+  }[]
+  images: {
+    id: number
+    name: string
+    thumbnail: string
+  }[]
 }

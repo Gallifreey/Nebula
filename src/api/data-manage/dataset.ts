@@ -1,5 +1,5 @@
 import type { DatasetCreateFormState, LabelCreateFormState } from '~@/types/form'
-import type { DatasetInfo, ImageDataSetDetails, ImageDataShortDetails, ImageType } from '~@/types/structure'
+import type { DatasetInfo, ImageDataShortDetails, ImageType } from '~@/types/structure'
 
 export interface DSResultModel {
   status: string
