@@ -21,9 +21,9 @@ public class DataSet implements Serializable {
 
     private Integer capacity;
 
-    private Integer importStatus;
+    private Integer importStatus = 0;
 
-    private Integer labelingStatus;
+    private Integer labelingStatus = 0;
 
     private String name;
 

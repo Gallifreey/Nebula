@@ -1,6 +1,9 @@
 package com.nebula.nebulaprovider.service;
 
+import com.nebula.nebulaprovider.entity.dataset.Data;
 import com.nebula.nebulaprovider.entity.dataset.DataSet;
+import com.nebula.nebulaprovider.entity.dataset.Form.ImageDataShort;
+import com.nebula.nebulaprovider.entity.dataset.Label;
 import com.nebula.nebulaprovider.mapper.DataSetMapper;
 import com.nebula.nebulaprovider.service.impl.DataSetServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,5 +19,32 @@ public class DataSetService implements DataSetServiceImpl {
     @Override
     public List<DataSet> getDatasetBySPID(Integer spid) {
         return dataSetMapper.getDatasetBySPID(spid);
+    }
+
+    @Override
+    public Integer addNewDataset(DataSet dataSet) {
+        return dataSetMapper.addNewDataset(dataSet);
+    }
+
+    @Override
+    public List<Label> getLabelsByDSID(Integer id) {
+        return dataSetMapper.getLabelsByDSID(id);
+    }
+
+    @Override
+    public String getDatasetNameByDSID(Integer id) {
+        return dataSetMapper.getDatasetNameByDSID(id);
+    }
+
+    @Override
+    public void addDataFromBatch(List<Data> dataList) {
+        for (Data data: dataList) {
+            dataSetMapper.addNewData(data);
+        }
+    }
+
+    @Override
+    public List<ImageDataShort> getPreviewDataByDSID(Integer id, Integer preview, Integer offset) {
+        return dataSetMapper.getPreviewDataByDSID(id, preview, offset);
     }
 }
