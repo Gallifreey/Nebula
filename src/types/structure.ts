@@ -48,27 +48,3 @@ export interface ImageDataSetDetails<T extends ImageType> {
   labels: Label[]
   images: Image<T>[]
 }
-
-export interface ImageDataShortDetails {
-  labels: {
-    id: number
-    color: string
-    name: string
-  }[]
-  images: {
-    id: number
-    name: string
-    thumbnail: string
-  }[]
-}
-
-export interface LabelPlaygroundData<T extends ImageType> {
-  labels: Label[]
-  meta: {
-    total: number
-    labeled: number
-    unlabeled: number
-  }
-  preview: number
-  data: Image<T>[]
-}
