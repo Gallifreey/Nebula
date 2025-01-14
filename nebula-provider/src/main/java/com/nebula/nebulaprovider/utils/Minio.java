@@ -18,7 +18,7 @@ public class Minio {
     public static List<File> unzipInputStream(MinioClient minioClient, InputStream zipInputStream) {
         List<File> fileList = new ArrayList<>();
         try (ZipArchiveInputStream zip = new ZipArchiveInputStream(zipInputStream)) {
-            ZipArchiveEntry zipEntry = null;
+            ZipArchiveEntry zipEntry;
             while ((zipEntry = zip.getNextZipEntry()) != null) {
                 String fileName_zip = zipEntry.getName();
                 System.out.println(fileName_zip);
