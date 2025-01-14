@@ -12,6 +12,7 @@ const appStore = useAppStore()
 const { layoutSetting } = storeToRefs(appStore)
 const router = useRouter()
 const token = useAuthorization()
+const id = useUserID()
 const loginModel = reactive({
   username: undefined,
   password: undefined,
@@ -58,6 +59,7 @@ async function submit() {
     }
     const { data } = await loginApi(params)
     token.value = data?.token
+    id.value = data?.id
     notification.success({
       message: '登录成功',
       description: '欢迎回来！',

@@ -21,7 +21,7 @@ export interface RequestConfigExtra {
 const instance: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_APP_BASE_API ?? '/',
   timeout: 60000,
-  headers: { 'Content-Type': ContentTypeEnum.JSON },
+  headers: { 'Content-Type': ContentTypeEnum.FORM_DATA },
 })
 const axiosLoading = new AxiosLoading()
 async function requestHandler(config: InternalAxiosRequestConfig & RequestConfigExtra): Promise<InternalAxiosRequestConfig> {

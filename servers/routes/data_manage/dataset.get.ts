@@ -3,12 +3,12 @@ import type { DatasetInfo } from '~@/types/structure'
 
 const data: DatasetInfo[] = [
   {
-    version: 1,
+    version: '1',
     id: 212233,
     capacity: 95,
     importStatus: 0,
     type: 1,
-    labelStatus: 50,
+    labelingStatus: 50,
     name: '垃圾分类',
     groupID: 12345,
     createTime: '2024-06-13 13:01:55',
@@ -17,12 +17,12 @@ const data: DatasetInfo[] = [
     source: 0,
   },
   {
-    version: 2,
+    version: '2',
     id: 2122330,
     capacity: 195,
     importStatus: 1,
     type: 2,
-    labelStatus: 50,
+    labelingStatus: 50,
     name: '垃圾分类2',
     groupID: 123450,
     createTime: '2024-06-13 13:01:55',

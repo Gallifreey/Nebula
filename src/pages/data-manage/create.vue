@@ -17,17 +17,18 @@ const stepItems = [
 const formRef1 = ref()
 const formRef2 = ref()
 const current = ref(0)
-const currentSelected = ref(0)
 const router = useRouter()
+const id = useUserID()
 const formState = ref<DatasetCreateFormState>({
   name: '',
   dataType: 0,
-  labelType: 0,
+  type: 0,
   version: 1,
-  template: 0,
   labelStatus: 0,
   importType: [0],
   fileList: [],
+  oid: id.value || -1,
+  spid: 1,
 })
 const labelStaticData = [
   {
@@ -93,18 +94,8 @@ async function handleCreate() {
           </a-form-item>
           <a-form-item name="labelType" label="标注类型">
             <a-flex :gap="10" wrap="wrap">
-              <LabelTypeCard v-for="(item, index) in labelStaticData" :key="index" :label="item.label" :url="item.url" :selected="currentSelected === index" @click="currentSelected = index" />
+              <LabelTypeCard v-for="(item, index) in labelStaticData" :key="index" :label="item.label" :url="item.url" :selected="formState.type === (index + 1)" @click="formState.type = (index + 1)" />
             </a-flex>
-          </a-form-item>
-          <a-form-item name="template" label="标注模板">
-            <a-radio-group v-model:value="formState.template">
-              <a-radio :value="0">
-                单图单标签
-              </a-radio>
-              <a-radio :value="1">
-                单图多标签
-              </a-radio>
-            </a-radio-group>
           </a-form-item>
         </a-form>
       </template>

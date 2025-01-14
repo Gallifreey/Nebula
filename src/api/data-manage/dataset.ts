@@ -5,6 +5,11 @@ export interface DSResultModel {
   status: string
 }
 
+interface DatasetCreateFormModel {
+  dataset: Omit<DatasetCreateFormState, 'fileList'>
+  file?: any[]
+}
+
 interface URLResultModel {
   url: string
 }
@@ -14,7 +19,11 @@ interface NumberModel {
 }
 
 export function dsCreateApi(params: DatasetCreateFormState) {
-  return usePost<DSResultModel, DatasetCreateFormState>('/data_manage/dataset', params, {
+  const formData = new FormData()
+  formData.append('dataset', JSON.stringify(params))
+  for (const file of params.fileList)
+    formData.append('files', toRaw(file).originFileObj)
+  return usePost<DSResultModel, FormData>('/data_manage/dataset', formData, {
     customDev: true,
     loading: true,
   })
