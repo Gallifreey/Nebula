@@ -1,10 +1,10 @@
 export interface DatasetInfo {
-  version: number
+  version: string
   id: number
   capacity: number
   importStatus: number
   type: number
-  labelStatus: number
+  labelingStatus: number
   name: string
   groupID: number
   createTime: string
@@ -41,10 +41,34 @@ export interface Image<T extends ImageType> {
   name: string
   thumbnail: string
   type: T
-  labelData: T extends 'classification' ? ImageClassificationLabel : ObjectDetectionLabel[]
+  labelData?: T extends 'classification' ? ImageClassificationLabel : ObjectDetectionLabel[]
 }
 
 export interface ImageDataSetDetails<T extends ImageType> {
   labels: Label[]
   images: Image<T>[]
+}
+
+export interface ImageDataShortDetails {
+  labels: {
+    id: number
+    color: string
+    name: string
+  }[]
+  images: {
+    id: number
+    name: string
+    thumbnail: string
+  }[]
+}
+
+export interface LabelPlaygroundData<T extends ImageType> {
+  labels: Label[]
+  meta: {
+    total: number
+    labeled: number
+    unlabeled: number
+  }
+  preview: number
+  data: Image<T>[]
 }

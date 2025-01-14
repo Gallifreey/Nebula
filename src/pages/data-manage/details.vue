@@ -5,12 +5,13 @@ import LabelImage from './components/LabelImage.vue'
 import { addNewLabelApi, getDataSetDetailsApi } from '~@/api/data-manage/dataset'
 import type { LabelCreateFormState } from '~@/types/form'
 import { RESPONSE_CODE } from '~@/types/static'
+import type { ImageDataShortDetails } from '~@/types/structure'
 
 const router = useRoute()
 const id = router.query.id
 const open = ref(false)
 const activeKey = ref('1')
-const detials = ref()
+const detials = ref<ImageDataShortDetails>()
 const formRef = ref()
 const formState = ref<LabelCreateFormState>({
   name: `label ${Math.floor(Math.random() * 10000).toString()}`,
@@ -20,7 +21,7 @@ async function handleDataSetDetailsView() {
   if (typeof id === 'string') {
     const dsid = Number.parseInt(id, 10)
     if (!Number.isNaN(dsid))
-      detials.value = (await getDataSetDetailsApi(dsid, 'classification')).data
+      detials.value = (await getDataSetDetailsApi(dsid)).data
     else console.error('Invalid id: id is not a valid number')
   }
   else {

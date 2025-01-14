@@ -29,7 +29,7 @@ function handlePreviewDSDetails(id: number) {
   })
 }
 async function handleDataSetInfoView() {
-  const data = await getDataSetApi(0)
+  const data = await getDataSetApi(1)
   if (data.data) {
     testDataSet.value = data.data
     loading.value = false
@@ -129,7 +129,7 @@ onMounted(() => handleDataSetInfoView())
                           {{ item.capacity }}
                         </a-descriptions-item>
                         <a-descriptions-item label="已标注" :span="2">
-                          {{ item.labelStatus }} (进度 {{ Math.ceil((record.labelStatus / record.capacity) * 100) }}%)
+                          {{ item.labelingStatus }} (进度 {{ Math.ceil((record.labelingStatus / record.capacity) * 100) }}%)
                         </a-descriptions-item>
                         <a-descriptions-item label="标签个数" :span="1">
                           {{ item.totalLabels }}

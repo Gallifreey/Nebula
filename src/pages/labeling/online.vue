@@ -2,6 +2,12 @@
 import { ArrowLeftOutlined, ArrowRightOutlined, DeleteOutlined, DownOutlined, EditOutlined, FullscreenOutlined, MinusCircleOutlined, PlusCircleOutlined, PlusOutlined, RedoOutlined, SaveOutlined, SettingOutlined, UndoOutlined } from '@ant-design/icons-vue'
 import { h } from 'vue'
 import LabelUnit from './components/LabelUnit.vue'
+import { getLabelPlaygroundApi } from '~@/api/labeling/playground'
+
+const data = ref()
+onMounted(async () => {
+  data.value = (await getLabelPlaygroundApi(0, 'classification')).data
+})
 </script>
 
 <template>

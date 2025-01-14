@@ -1,8 +1,19 @@
 import type { DatasetCreateFormState, LabelCreateFormState } from '~@/types/form'
-import type { DatasetInfo, ImageDataSetDetails, ImageType } from '~@/types/structure'
+import type { DatasetInfo, ImageDataSetDetails, ImageDataShortDetails, ImageType } from '~@/types/structure'
 
 export interface DSResultModel {
   status: string
+}
+
+interface DatasetCreateFormModel {
+  dataset: Omit<DatasetCreateFormState, 'fileList'>
+  file?: any[]
+}
+
+interface DatasetDetailsFormModel {
+  id: number
+  preview: number
+  offset: number
 }
 
 interface URLResultModel {
@@ -14,7 +25,11 @@ interface NumberModel {
 }
 
 export function dsCreateApi(params: DatasetCreateFormState) {
-  return usePost<DSResultModel, DatasetCreateFormState>('/data_manage/dataset', params, {
+  const formData = new FormData()
+  formData.append('dataset', JSON.stringify(params))
+  for (const file of params.fileList)
+    formData.append('files', toRaw(file).originFileObj)
+  return usePost<DSResultModel, FormData>('/data_manage/dataset', formData, {
     customDev: true,
     loading: true,
   })
@@ -28,9 +43,11 @@ export function getDataSetApi(sid: number) {
 }
 
 // dsid 数据集ID
-export function getDataSetDetailsApi(dsid: number, itype: ImageType) {
-  return useGet<ImageDataSetDetails<typeof itype>, NumberModel>('/data_manage/details', {
+export function getDataSetDetailsApi(dsid: number) {
+  return useGet<ImageDataShortDetails, DatasetDetailsFormModel>('/data_manage/details', {
     id: dsid,
+    preview: 30,
+    offset: 0,
   })
 }
 

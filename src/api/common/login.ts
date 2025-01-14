@@ -12,6 +12,7 @@ export interface LoginMobileParams {
 
 export interface LoginResultModel {
   token: string
+  id: number
 }
 
 export function loginApi(params: LoginParams | LoginMobileParams) {

@@ -12,12 +12,13 @@ export interface DatasetCreateFormState {
   name: string
   dataType: number
   version: number
-  labelType: number
-  template: number
+  type: number
   labelStatus: number
   importType: number[]
   fileList: any[]
   labelFormat?: number
+  oid: number
+  spid: number
 }
 
 export interface LabelCreateFormState {
