@@ -14,9 +14,15 @@ public interface DataSetServiceImpl {
 
     List<Label> getLabelsByDSID(Integer id);
 
+    Integer addNewLabel(Label label);
+
     String getDatasetNameByDSID(Integer id);
 
     void addDataFromBatch(List<Data> dataList);
 
     List<ImageDataShort> getPreviewDataByDSID(Integer id, Integer preview, Integer offset);
+
+    Integer getSingleValue(Integer id, String key);
+
+    List<Integer> getLabelIDSets(Integer id, String query);
 }

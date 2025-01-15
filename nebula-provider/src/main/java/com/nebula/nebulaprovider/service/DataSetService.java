@@ -32,6 +32,11 @@ public class DataSetService implements DataSetServiceImpl {
     }
 
     @Override
+    public Integer addNewLabel(Label label) {
+        return dataSetMapper.addNewLabel(label);
+    }
+
+    @Override
     public String getDatasetNameByDSID(Integer id) {
         return dataSetMapper.getDatasetNameByDSID(id);
     }
@@ -46,5 +51,15 @@ public class DataSetService implements DataSetServiceImpl {
     @Override
     public List<ImageDataShort> getPreviewDataByDSID(Integer id, Integer preview, Integer offset) {
         return dataSetMapper.getPreviewDataByDSID(id, preview, offset);
+    }
+
+    @Override
+    public Integer getSingleValue(Integer id, String key) {
+        return dataSetMapper.getSingleValue(id, key);
+    }
+
+    @Override
+    public List<Integer> getLabelIDSets(Integer id, String query) {
+        return dataSetMapper.getLabelIDSets(id, query);
     }
 }

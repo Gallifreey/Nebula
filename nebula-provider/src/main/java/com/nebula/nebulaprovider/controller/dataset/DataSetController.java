@@ -58,19 +58,35 @@ public class DataSetController {
         return Result.success("添加成功");
     }
 
-    @GetMapping("/api/data_manage/details")
+    @GetMapping("/api/data_manage/images")
     public Result getDatasetDetails(Integer id, Integer preview, Integer offset) throws Exception {
-        List<Label> labels = dataSetService.getLabelsByDSID(id);
-        String name = dataSetService.getDatasetNameByDSID(id);
         List<ImageDataShort> images = dataSetService.getPreviewDataByDSID(id, preview, offset);
         Minio.getFilesFromPathList(minioClient, images);
         ImageDataShortDetails details = new ImageDataShortDetails();
         details.setImages(images);
+        details.setCapacity(dataSetService.getSingleValue(id, "capacity"));
         return Result.success(details);
     }
 
     @GetMapping("/api/data_manage/labels")
-    public Result getLabels(Integer dsid){
-        return Result.success(dataSetService.getLabelsByDSID(dsid));
+    public Result getLabels(Integer id){
+        return Result.success(dataSetService.getLabelsByDSID(id));
+    }
+
+    @PostMapping("/api/data_manage/labels")
+    public Result addLabel(String name, String color, Integer id){
+        Label label = new Label();
+        label.setName(name);
+        label.setColor(color);
+        label.setDsid(id);
+        Integer code = dataSetService.addNewLabel(label);
+        if(code == 0) return Result.error("添加失败");
+        return Result.success("添加成功");
+    }
+
+
+    @GetMapping("/api/data_manage/source_image")
+    public Result getSourceImage(Integer pid) {
+        return Result.success();
     }
 }

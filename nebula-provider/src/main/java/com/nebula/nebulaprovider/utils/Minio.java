@@ -122,9 +122,9 @@ public class Minio {
         GetPresignedObjectUrlArgs args = GetPresignedObjectUrlArgs.builder()
                 .bucket(BUCKET_NAME)
                 .object(image.getPath())
-                .expiry(1, TimeUnit.HOURS)
+                .expiry(1, TimeUnit.MINUTES)
                 .method(Method.GET).build();
-        image.setThumbnail(minioClient.getPresignedObjectUrl(args));
+        image.setThumbnail(minioClient.getPresignedObjectUrl(args).split("\\?")[0]);
     }
 
 }

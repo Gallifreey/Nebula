@@ -7,16 +7,8 @@ import java.io.Serializable;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class Label implements Serializable {
+public class ClassificationLabel implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Integer id;
-
-    private String name;
-
-    private String color="black";
-
-    private Integer capacity=0;
-
-    private Integer dsid;
 }

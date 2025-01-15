@@ -13,4 +13,28 @@ public class Constant {
         SUFFIX_TABLE.put("txt", "text/plain");
         SUFFIX_TABLE.put("json", "text/plain");
     }
+
+    public enum DATASET_TYPE{
+        CLASSIFICATION(1), BOX_2D(2), NONE(65535);
+        private final Integer type;
+
+        DATASET_TYPE(Integer type) {
+            this.type = type;
+        }
+
+        public Integer getType() {
+            return type;
+        }
+
+        public static DATASET_TYPE valueOf(Integer value){
+            switch (value) {
+                case 1:
+                    return CLASSIFICATION;
+                case 2:
+                    return BOX_2D;
+                default:
+                    return NONE;
+            }
+        }
+    }
 }

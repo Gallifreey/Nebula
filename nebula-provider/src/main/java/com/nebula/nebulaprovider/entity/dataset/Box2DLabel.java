@@ -7,16 +7,16 @@ import java.io.Serializable;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class Label implements Serializable {
+public class Box2DLabel implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Integer id;
 
-    private String name;
+    private Integer x;
 
-    private String color="black";
+    private Integer y;
 
-    private Integer capacity=0;
+    private Integer width;
 
-    private Integer dsid;
+    private Integer height;
 }
