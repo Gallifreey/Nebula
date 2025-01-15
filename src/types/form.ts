@@ -24,4 +24,5 @@ export interface DatasetCreateFormState {
 export interface LabelCreateFormState {
   name: string
   color: string
+  id: number
 }

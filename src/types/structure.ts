@@ -45,14 +45,15 @@ export interface Image<T extends ImageType> {
 }
 
 export interface ImageDataShortDetails {
-  labels: {
+  labels?: {
     id: number
     name: string
     color: string
   }[]
-  images: {
+  images?: {
     id: number
     name: string
     thumbnail: string
   }[]
+  capacity?: number
 }

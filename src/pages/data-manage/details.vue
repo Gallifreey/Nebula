@@ -2,30 +2,48 @@
 import { SwapOutlined } from '@ant-design/icons-vue'
 import LabelUnit from './components/LabelUnit.vue'
 import LabelImage from './components/LabelImage.vue'
-import { addNewLabelApi, getDataSetDetailsApi } from '~@/api/data-manage/dataset'
+import { addNewLabelApi, getDataSetImageDetailsApi, getDataSetLabelDetailsApi } from '~@/api/data-manage/dataset'
 import type { LabelCreateFormState } from '~@/types/form'
 import { RESPONSE_CODE } from '~@/types/static'
 import type { ImageDataShortDetails } from '~@/types/structure'
 
 const router = useRoute()
 const id = router.query.id
+let dsid = -1
+if (typeof id === 'string') {
+  dsid = Number.parseInt(id, 10)
+  if (Number.isNaN(dsid))
+    console.error('Invalid id: id is not a valid number')
+}
+else {
+  console.error('Invalid id: id is not a string')
+}
+
 const open = ref(false)
 const activeKey = ref('1')
-const detials = ref<ImageDataShortDetails>()
+const images = ref<ImageDataShortDetails['images']>([])
+const labels = ref<ImageDataShortDetails['labels']>([])
+
+const capacity = ref(0)
+const offset = ref(0)
+const preview = ref(20)
+
 const formRef = ref()
 const formState = ref<LabelCreateFormState>({
   name: `label ${Math.floor(Math.random() * 10000).toString()}`,
   color: 'white',
+  id: dsid,
 })
-async function handleDataSetDetailsView() {
-  if (typeof id === 'string') {
-    const dsid = Number.parseInt(id, 10)
-    if (!Number.isNaN(dsid))
-      detials.value = (await getDataSetDetailsApi(dsid)).data
-    else console.error('Invalid id: id is not a valid number')
+async function handleDataSetDetailsView(cancleLabel: boolean = false) {
+  const data = (await getDataSetImageDetailsApi(dsid, preview.value, offset.value)).data
+  if (data) {
+    images.value = data.images
+    capacity.value = data.capacity || 0
   }
-  else {
-    console.error('Invalid id: id is not a string')
+  if (!cancleLabel) {
+    const data = (await getDataSetLabelDetailsApi(dsid)).data
+    if (data)
+      labels.value = data
   }
 }
 function openModal() {
@@ -36,6 +54,7 @@ function closeModal() {
   formState.value = {
     name: `label ${Math.floor(Math.random() * 10000).toString()}`,
     color: 'white',
+    id: dsid,
   }
 }
 function handleAddNewLabel() {
@@ -44,6 +63,14 @@ function handleAddNewLabel() {
     if (code === RESPONSE_CODE.OK)
       open.value = false
   }).catch(() => {})
+}
+function pageChange(pageNumber: number) {
+  offset.value = (pageNumber - 1) * preview.value
+  handleDataSetDetailsView(true)
+}
+function sizeChange(_current: number, pageSize: number) {
+  preview.value = pageSize
+  handleDataSetDetailsView(true)
 }
 onMounted(() => handleDataSetDetailsView())
 </script>
@@ -100,7 +127,7 @@ onMounted(() => handleDataSetDetailsView())
             </div>
             <div class="label-body">
               <div class="label-unit">
-                <LabelUnit v-for="(label, index) in detials?.labels" :key="index" :meta="label" />
+                <LabelUnit v-for="(label, index) in labels" :key="index" :meta="label" />
               </div>
             </div>
           </div>
@@ -115,7 +142,7 @@ onMounted(() => handleDataSetDetailsView())
           </div>
           <div class="label-image-container">
             <a-flex wrap="wrap" gap="small">
-              <LabelImage v-for="(image, index) in detials?.images" :key="index" :pid="image.id" :checked="false" :name="image.name" :thumbnail="image.thumbnail" />
+              <LabelImage v-for="(image, index) in images" :key="index" :pid="image.id" :checked="false" :name="image.name" :thumbnail="image.thumbnail" />
             </a-flex>
           </div>
         </a-col>
@@ -141,6 +168,7 @@ onMounted(() => handleDataSetDetailsView())
         </a-form-item>
       </a-form>
     </a-modal>
+    <a-pagination v-model:current="offset" v-model:pageSize="preview" :total="capacity" @change="pageChange" @show-size-change="sizeChange" />
   </PageContainer>
 </template>
 

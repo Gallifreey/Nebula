@@ -31,24 +31,28 @@ onMounted(async () => {
           <div class="header">
             <div class="toolbar">
               <a-space>
-                <a-button type="text" :icon="h(EditOutlined)" size="small" />
-                <a-button type="text" :icon="h(UndoOutlined)" size="small" />
-                <a-button type="text" :icon="h(RedoOutlined)" size="small" />
+                <a-tooltip title="自动标注">
+                  <a-button type="text" :icon="h(SettingOutlined)" size="small" />
+                </a-tooltip>
+                <a-tooltip title="删除">
+                  <a-button type="text" :icon="h(DeleteOutlined)" size="small" />
+                </a-tooltip>
                 <a-divider type="vertical" />
-                <a-button type="text" :icon="h(PlusCircleOutlined)" size="small" />
-                <a-button type="text" :icon="h(MinusCircleOutlined)" size="small" />
-                <a-button type="text" :icon="h(SettingOutlined)" size="small" />
-                <a-button type="text" :icon="h(DeleteOutlined)" size="small" />
-                <a-divider type="vertical" />
-                <a-button type="text" :icon="h(FullscreenOutlined)" size="small" />
+                <a-tooltip title="全屏">
+                  <a-button type="text" :icon="h(FullscreenOutlined)" size="small" />
+                </a-tooltip>
               </a-space>
             </div>
             <div class="navbar">
               <a-space>
                 <div>
-                  <a-button type="text" :icon="h(ArrowLeftOutlined)" size="small" />
+                  <a-tooltip title="上一张">
+                    <a-button type="text" :icon="h(ArrowLeftOutlined)" size="small" />
+                  </a-tooltip>
                   第 1 张 / 共 1111 张
-                  <a-button type="text" :icon="h(ArrowRightOutlined)" size="small" />
+                  <a-tooltip title="下一张">
+                    <a-button type="text" :icon="h(ArrowRightOutlined)" size="small" />
+                  </a-tooltip>
                 </div>
                 <a-checkbox>标为无效数据 (W)</a-checkbox>
                 <a-button type="link" ghost size="small">

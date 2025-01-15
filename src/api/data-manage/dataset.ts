@@ -43,11 +43,18 @@ export function getDataSetApi(sid: number) {
 }
 
 // dsid 数据集ID
-export function getDataSetDetailsApi(dsid: number) {
-  return useGet<ImageDataShortDetails, DatasetDetailsFormModel>('/data_manage/details', {
+export function getDataSetImageDetailsApi(dsid: number, preview: number, offset: number) {
+  return useGet<Omit<ImageDataShortDetails, 'labels'>, DatasetDetailsFormModel>('/data_manage/images', {
     id: dsid,
-    preview: 30,
-    offset: 0,
+    preview,
+    offset,
+  })
+}
+
+// dsid 数据集ID
+export function getDataSetLabelDetailsApi(dsid: number) {
+  return useGet<ImageDataShortDetails['labels'], NumberModel>('/data_manage/labels', {
+    id: dsid,
   })
 }
 
@@ -59,7 +66,7 @@ export function getSourceImageApi(pid: number) {
 }
 
 export function addNewLabelApi(label: LabelCreateFormState) {
-  return usePost<DSResultModel, LabelCreateFormState>('/data_manage/label', label, {
+  return usePost<DSResultModel, LabelCreateFormState>('/data_manage/labels', label, {
     customDev: true,
     loading: true,
   })
