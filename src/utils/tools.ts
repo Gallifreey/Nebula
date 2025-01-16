@@ -87,3 +87,16 @@ export function findLabelByValue(data: any, value: number) {
   }
   return null
 }
+
+export function useVModel(props: any, propName: string, emits: any, func = () => {}) {
+  const show = computed({
+    get() {
+      return props[propName]
+    },
+    set(value) {
+      emits(`update:${propName}`, value)
+      func()
+    },
+  })
+  return show
+}

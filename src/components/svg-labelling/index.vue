@@ -3,18 +3,36 @@
 import type { Graph } from '@antv/x6'
 import { graphInit, switchToNext } from './utils/handler'
 import labelMenu from './components/label-menu.vue'
+import type { PlaygroundData } from '~@/types/structure'
+import Bus from '~@/utils/bus'
 
+const props = defineProps({
+  data: {
+    type: Object as PropType<PlaygroundData['image']>,
+    required: true,
+    default: () => {
+      return {
+        url: 'https://www.mcmod.cn/static/public/images/logo.png?v=4',
+        width: 500,
+        height: 500,
+      }
+    },
+  },
+})
+const emits = defineEmits(['update:data'])
+const data = useVModel(props, 'data', emits)
 const canvasDOM = ref()
-const history = useHistoryStore()
+// const history = useHistoryStore()
 let graph: Graph
 function render(container: HTMLElement) {
   return graphInit(container)
 }
 onMounted(() => {
   graph = render(canvasDOM.value)
-  switchToNext(graph, 'https://stardust-public.oss-cn-hangzhou.aliyuncs.com/%E5%AE%98%E7%BD%91/%E6%A0%87%E6%B3%A8%E5%B7%A5%E5%85%B7%E9%A2%84%E8%A7%88/%E5%9B%BE%E7%89%87/object_detection.png?x-oss-process=image%2Fformat%2Cwebp', {
-    width: 1005,
-    height: 671,
+  /*
+  switchToNext(graph, data.value.url, {
+    width: data.value.width,
+    height: data.value.height,
   })
   const node = graph.createNode({
     shape: 'rect',
@@ -42,6 +60,13 @@ onMounted(() => {
     },
   })
   graph.addNode(node)
+  */
+})
+Bus.on('on-update', (data: PlaygroundData['image']) => {
+  switchToNext(graph, data.url, {
+    width: data.width,
+    height: data.height,
+  })
 })
 </script>
 
@@ -58,7 +83,7 @@ onMounted(() => {
 }
 .container{
   height: 500px;
-  width: 1000px;
+  width: 100%;
 }
 .popover{
   position: absolute;

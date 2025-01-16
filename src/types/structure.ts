@@ -21,13 +21,13 @@ export interface Label {
 }
 
 export interface ImageClassificationLabel {
-  labelName: string
-  labelID: number
+  name: string
+  id: number
 }
 
 export interface ObjectDetectionLabel {
-  labelName: string
-  labelID: number
+  name: string
+  id: number
   x: number
   y: number
   width: number
@@ -36,12 +36,10 @@ export interface ObjectDetectionLabel {
 
 export type ImageType = 'classification' | 'detection'
 
-export interface Image<T extends ImageType> {
+export interface Image {
   id: number
   name: string
   thumbnail: string
-  type: T
-  labelData?: T extends 'classification' ? ImageClassificationLabel : ObjectDetectionLabel[]
 }
 
 export interface ImageDataShortDetails {
@@ -56,4 +54,18 @@ export interface ImageDataShortDetails {
     thumbnail: string
   }[]
   capacity?: number
+}
+
+export interface LabelPlaygroundData<T extends ImageType> {
+  images: Image[]
+  labels: T extends 'classification' ? ImageClassificationLabel[] : ObjectDetectionLabel[]
+  capacity: number
+}
+
+export interface PlaygroundData {
+  image: {
+    url: string
+    height: number
+    width: number
+  }
 }

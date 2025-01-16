@@ -28,6 +28,14 @@ function handlePreviewDSDetails(id: number) {
     },
   })
 }
+function handleLabeling(id: number) {
+  router.push({
+    path: '/data-labeling/online',
+    query: {
+      id,
+    },
+  })
+}
 async function handleDataSetInfoView() {
   const data = await getDataSetApi(1)
   if (data.data) {
@@ -183,7 +191,7 @@ onMounted(() => handleDataSetInfoView())
                   <a-button type="link" size="small">
                     导出
                   </a-button>
-                  <a-button type="link" size="small">
+                  <a-button type="link" size="small" @click="handleLabeling(record.id)">
                     标注
                   </a-button>
                   <a-button type="link" size="small">
