@@ -1,5 +1,6 @@
 package com.nebula.nebulaprovider.entity.dataset.Form;
 
+import com.nebula.nebulaprovider.entity.dataset.Image;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -8,12 +9,11 @@ import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class LabelingPlaygroundData implements Serializable {
+public class ImageAnnotationObject<T> implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private List<ImageDataShort> images;
+    private Image image;
 
-    private List<Object> labels;
+    private List<T> annotations;
 
-    private Integer capacity;
 }

@@ -3,6 +3,7 @@ package com.nebula.nebulaprovider.utils;
 import com.nebula.nebulaprovider.entity.dataset.Data;
 import com.nebula.nebulaprovider.entity.dataset.DataSet;
 import com.nebula.nebulaprovider.entity.dataset.Form.ImageDataShort;
+import io.minio.GetObjectArgs;
 import io.minio.GetPresignedObjectUrlArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
@@ -36,6 +37,10 @@ public class Minio {
             "labels",
             "images"
     };
+
+    public static String getBucketName(){
+        return BUCKET_NAME;
+    }
 
     public static List<String> unzipInputStream(MinioClient minioClient, InputStream zipInputStream, DataSet dataSet) {
         int capacity = 0;
@@ -125,6 +130,19 @@ public class Minio {
                 .expiry(1, TimeUnit.MINUTES)
                 .method(Method.GET).build();
         image.setThumbnail(minioClient.getPresignedObjectUrl(args).split("\\?")[0]);
+    }
+
+    public static String getFileContentFromPath(MinioClient minioClient, String path) throws Exception {
+        GetObjectArgs args = GetObjectArgs.builder()
+                .bucket(BUCKET_NAME)
+                .object(path)
+                .build();
+        InputStream inputStream = minioClient.getObject(args);
+        BufferedReader bdr = new BufferedReader(new InputStreamReader(inputStream));
+        String line;
+        StringBuilder lines = new StringBuilder();
+        while ((line = bdr.readLine())!= null) lines.append(line).append("\n");
+        return lines.toString();
     }
 
 }

@@ -3,6 +3,7 @@ package com.nebula.nebulaprovider.service.impl;
 import com.nebula.nebulaprovider.entity.dataset.Data;
 import com.nebula.nebulaprovider.entity.dataset.DataSet;
 import com.nebula.nebulaprovider.entity.dataset.Form.ImageDataShort;
+import com.nebula.nebulaprovider.entity.dataset.Form.LabelDataShort;
 import com.nebula.nebulaprovider.entity.dataset.Label;
 
 import java.util.List;
@@ -25,4 +26,6 @@ public interface DataSetServiceImpl {
     Integer getSingleValue(Integer id, String key);
 
     List<Integer> getLabelIDSets(Integer id, String query);
+
+    List<LabelDataShort> getLabels(Integer id, String query);
 }

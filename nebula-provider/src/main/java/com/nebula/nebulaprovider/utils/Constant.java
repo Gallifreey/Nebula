@@ -4,6 +4,8 @@ import java.util.HashMap;
 
 public class Constant {
     public static HashMap<String, String> SUFFIX_TABLE = new HashMap<>();
+    public static String CLASSES_FILE_NAME = "classes.txt";
+
     static {
         SUFFIX_TABLE.put("*", "application/octet-stream");
         SUFFIX_TABLE.put("bmp", "application/x-bmp");

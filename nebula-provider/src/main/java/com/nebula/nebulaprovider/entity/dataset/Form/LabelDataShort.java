@@ -15,4 +15,6 @@ public class LabelDataShort implements Serializable {
     private String name;
 
     private String color;
+
+    private Integer capacity=0;
 }

@@ -2,6 +2,7 @@ package com.nebula.nebulaprovider.mapper;
 import com.nebula.nebulaprovider.entity.dataset.Data;
 import com.nebula.nebulaprovider.entity.dataset.DataSet;
 import com.nebula.nebulaprovider.entity.dataset.Form.ImageDataShort;
+import com.nebula.nebulaprovider.entity.dataset.Form.LabelDataShort;
 import com.nebula.nebulaprovider.entity.dataset.Label;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -23,7 +24,7 @@ public interface DataSetMapper {
     @Select("SELECT * FROM label WHERE dsid=#{id}")
     List<Label> getLabelsByDSID(Integer id);
 
-    @Insert("INSERT INTO label(name, color, dsid) VALUE(#{name}, #{color}, #{dsid})")
+    @Insert("INSERT INTO label(name, color, dsid, capacity) VALUE(#{name}, #{color}, #{dsid}, #{capacity})")
     Integer addNewLabel(Label label);
 
     @Select("SELECT name FROM dataset WHERE id=#{id}")
@@ -43,4 +44,7 @@ public interface DataSetMapper {
 
     @Select("SELECT id FROM label WHERE dsid=#{id} AND name IN ${query}")
     List<Integer> getLabelIDSets(Integer id, String query);
+
+    @Select("SELECT id, name, color, capacity FROM label WHERE dsid=#{id} AND name IN ${query}")
+    List<LabelDataShort> getLabels(Integer id, String query);
 }
