@@ -2,9 +2,13 @@
 import { DownOutlined } from '@ant-design/icons-vue'
 import Playground from './components/Playground.vue'
 import LabelUnit from './components/LabelUnit.vue'
+import type { Label } from '~@/types/structure'
+import { getLabelsApi } from '~@/api/labeling/playground'
+import Bus from '~@/utils/bus'
 
 const router = useRoute()
 const id = router.query.id
+const labels = ref<Label[]>([])
 let dsid = -1
 if (typeof id === 'string') {
   dsid = Number.parseInt(id, 10)
@@ -14,6 +18,16 @@ if (typeof id === 'string') {
 else {
   console.error('Invalid id: id is not a string')
 }
+onMounted(async () => {
+  const d = (await getLabelsApi(dsid)).data
+  if (d) {
+    labels.value = d
+    Bus.emit('on-labels-update', d)
+  }
+})
+Bus.on('on-labels-select', (data: number) => {
+  console.log(data)
+})
 </script>
 
 <template>
@@ -58,7 +72,7 @@ else {
           <div class="labels">
             <div class="label-body">
               <div class="label-unit">
-                <LabelUnit v-for="(_, index) in [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]" :key="index" label="11" color="pink">
+                <LabelUnit v-for="(label, index) in labels" :key="index" :label="label.name" :color="label.color">
                   <template #suffix>
                     <span style="margin-right: 5px">快捷键</span>
                     <a-avatar shape="square" size="small">

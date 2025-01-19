@@ -2,14 +2,14 @@
 <script lang="ts" setup>
 import type { Graph } from '@antv/x6'
 import { graphInit, switchToNext } from './utils/handler'
-import labelMenu from './components/label-menu.vue'
+import LabelMenu from './components/label-menu.vue'
 import type { PlaygroundData } from '~@/types/structure'
 import Bus from '~@/utils/bus'
 
 const props = defineProps({
   data: {
     type: Object as PropType<PlaygroundData['image']>,
-    required: true,
+    required: false,
     default: () => {
       return {
         url: 'https://www.mcmod.cn/static/public/images/logo.png?v=4',
@@ -73,7 +73,7 @@ Bus.on('on-update', (data: PlaygroundData['image']) => {
 <template>
   <div class="canvas">
     <div ref="canvasDOM" class="container" />
-    <labelMenu />
+    <LabelMenu />
   </div>
 </template>
 

@@ -1,6 +1,10 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script lang="ts" setup>
+import type { SelectProps } from 'ant-design-vue'
+import type { Label } from '~@/types/structure'
 import { LabelPopoverTitle } from '~@/utils/constant'
+import { generateAntdSelectValues, generateArrayFromObjArrays } from '~@/utils/tools'
+import Bus from '~@/utils/bus'
 
 defineProps({
   type: {
@@ -9,6 +13,16 @@ defineProps({
   },
 })
 const history = useHistoryStore()
+const config = useConfigStore()
+const options = ref<SelectProps['options']>()
+Bus.on('on-labels-update', (data: Label[]) => {
+  const values = generateArrayFromObjArrays(data, 'id')
+  const labels = generateArrayFromObjArrays(data, 'name')
+  options.value = generateAntdSelectValues(values, labels)
+})
+function onSelect(value: any) {
+  Bus.emit('on-labels-select', value)
+}
 </script>
 
 <template>
@@ -18,14 +32,15 @@ const history = useHistoryStore()
     :style="{
       top: `${history.setting.menuPos.y}px`,
       left: `${history.setting.menuPos.x}px`,
+      width: `${config.get('contextMenuWidth')}px`,
     }"
   >
     <div class="header">
-      {{ LabelPopoverTitle[type] }}
+      {{ LabelPopoverTitle[config.get('contextMenuTitleType')] }}
     </div>
     <div class="content">
       <span>类别</span>
-      <a-select placeholder="选择类别" class="select" clearable />
+      <a-select :options="options" placeholder="选择类别" class="select" clearable @select="onSelect" />
     </div>
   </div>
 </template>
@@ -34,7 +49,6 @@ const history = useHistoryStore()
 .popover{
   position: absolute;
   height: 150px;
-  width: 300px;
   z-index: 999;
   background: black;
   display: flex;

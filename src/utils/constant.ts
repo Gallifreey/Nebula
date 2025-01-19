@@ -36,6 +36,7 @@ export const ColorArray = [
 ]
 
 export const LabelPopoverTitle = [
+  'Classification',
   '2D-Box',
   'point',
   'segment',

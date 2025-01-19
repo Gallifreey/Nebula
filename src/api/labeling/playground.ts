@@ -1,4 +1,4 @@
-import type { ImageType, LabelPlaygroundData } from '~@/types/structure'
+import type { ImageType, Label, LabelPlaygroundData } from '~@/types/structure'
 
 interface NumberModel {
   id: number
@@ -14,5 +14,12 @@ export function getLabelPlaygroundApi(dsid: number, itype: ImageType, offset: nu
   return useGet<LabelPlaygroundData<typeof itype>, PGModel>('/labeling/playground', {
     id: dsid,
     offset,
+  })
+}
+
+// dsid 数据集ID
+export function getLabelsApi(dsid: number) {
+  return useGet<Label[], NumberModel>('/labeling/labels', {
+    id: dsid,
   })
 }

@@ -2,8 +2,8 @@
 import { ArrowLeftOutlined, ArrowRightOutlined, DeleteOutlined, FullscreenOutlined, PlusOutlined, SaveOutlined, SettingOutlined } from '@ant-design/icons-vue'
 import { h } from 'vue'
 import { message } from 'ant-design-vue'
-import type { ImageType, LabelPlaygroundData } from '~@/types/structure'
-import { getLabelPlaygroundApi } from '~@/api/labeling/playground'
+import type { ImageType, Label, LabelPlaygroundData } from '~@/types/structure'
+import { getLabelPlaygroundApi, getLabelsApi } from '~@/api/labeling/playground'
 import Bus from '~@/utils/bus'
 import { fullWindow } from '~@/utils/tools'
 
@@ -18,32 +18,31 @@ const props = defineProps({
   },
 })
 const dsid = computed(() => props.id)
-// const type = computed(() => props.type)
-const data = ref<LabelPlaygroundData<'classification'>>({
+const type = computed(() => props.type)
+const data = ref<LabelPlaygroundData<'classification'> | LabelPlaygroundData<'detection'>>({
   capacity: 0,
   images: [],
   labels: [],
 })
 const formState = ref({
-  current: 1,
+  current: 0,
+  offset: 0,
   image: {
     url: '',
     height: 0,
     width: 0,
   },
 })
+const left = computed(() => formState.value.offset * 10)
+const right = computed(() => Math.min(formState.value.offset * 10 + 9, data.value.capacity))
 onMounted(async () => {
-  const d = (await getLabelPlaygroundApi(dsid.value, 'classification')).data
-  if (d) {
-    data.value = d
-    jump()
-  }
+  loadData()
 })
 function handleFullScreen() {
   fullWindow('labeling-pg')
 }
 function handleNext() {
-  if (formState.value.current === data.value.capacity) {
+  if (formState.value.current === data.value.capacity - 1) {
     message.info('这是最后一张')
   }
   else {
@@ -52,7 +51,7 @@ function handleNext() {
   }
 }
 function handlePrev() {
-  if (formState.value.current === 1) {
+  if (formState.value.current === 0) {
     message.info('这是第一张')
   }
   else {
@@ -61,11 +60,26 @@ function handlePrev() {
   }
 }
 function update() {
-  Bus.emit('on-update', formState.value.image)
+  Bus.emit('on-update', toRaw(formState.value.image))
+}
+async function loadData() {
+  const d = (await getLabelPlaygroundApi(dsid.value, 'classification', formState.value.offset * 10)).data
+  if (d) {
+    data.value = d
+    jump()
+  }
 }
 function jump() {
+  if (left.value > formState.value.current) {
+    formState.value.offset--
+    loadData()
+  }
+  if (right.value < formState.value.current) {
+    formState.value.offset++
+    loadData()
+  }
   formState.value.image = {
-    url: data.value.images[formState.value.current - 1].thumbnail,
+    url: data.value.images[formState.value.current - formState.value.offset * 10].thumbnail,
     height: 500,
     width: 500,
   }
@@ -96,7 +110,7 @@ function jump() {
             <a-tooltip title="上一张">
               <a-button type="text" :icon="h(ArrowLeftOutlined)" size="small" @click="handlePrev" />
             </a-tooltip>
-            第 {{ formState.current }} 张 / 共 {{ data.capacity }} 张
+            第 {{ formState.current + 1 }} 张 / 共 {{ data.capacity }} 张
             <a-tooltip title="下一张">
               <a-button type="text" :icon="h(ArrowRightOutlined)" size="small" @click="handleNext" />
             </a-tooltip>
@@ -109,7 +123,7 @@ function jump() {
       </div>
     </div>
     <div class="canvas">
-      <SvgLabelling class="pg" :data="formState.image" />
+      <SvgLabelling class="pg" />
     </div>
     <div class="footerbar">
       <a-button shape="circle" :icon="h(ArrowLeftOutlined)" size="large" />

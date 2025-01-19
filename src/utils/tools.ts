@@ -1,4 +1,5 @@
 import { get } from 'lodash-es'
+import type { SelectProps } from 'ant-design-vue'
 import router from '@/router'
 import type { PointType } from '~@/types/canvas'
 
@@ -99,4 +100,25 @@ export function useVModel(props: any, propName: string, emits: any, func = () =>
     },
   })
   return show
+}
+
+export function generateAntdSelectValues(values: any[], labels: string[]) {
+  if (values.length !== labels.length)
+    throw new Error('Length of values must be equal to labels')
+  const options: SelectProps['options'] = []
+  for (let i = 0; i < values.length; i++) {
+    options.push({
+      value: values[i],
+      label: labels[i],
+    })
+  }
+  return options
+}
+
+export function generateArrayFromObjArrays<O, K extends keyof O>(obj: O[], key: K) {
+  const arr: O[K][] = []
+  obj.forEach((o: O) => {
+    arr.push(o[key])
+  })
+  return arr
 }

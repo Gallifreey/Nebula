@@ -8,6 +8,7 @@ import type { SizeType, entryType } from '~@/types/history'
 import { hexToRgba } from '~@/utils/tools'
 
 const history = useHistoryStore()
+const config = useConfigStore()
 const stack: Array<[string, any]> = []
 const MENU_PADDING = 10
 export const BACKGROUND_ID = 'bg_image'
@@ -125,6 +126,13 @@ function registerEvents(graph: Graph) {
   graph.on('node:mouseup', () => {
     history.setting.labelling = false
   })
+  graph.on('node:contextmenu', ({ x, y }) => {
+    setting.popover = true
+    setting.menuPos = {
+      x: x + config.get('contextMenuWidth') / 2,
+      y,
+    }
+  })
   graph.on('node:resizing', () => {
     setting.popover = false
   })
@@ -181,6 +189,7 @@ function registerKeys() {
 }
 
 function switchBackground(graph: Graph, url: string, size: SizeType) {
+  graph.clearCells()
   addNode(graph, {
     shape: 'image',
     x: 0,
