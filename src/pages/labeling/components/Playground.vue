@@ -2,8 +2,8 @@
 import { ArrowLeftOutlined, ArrowRightOutlined, DeleteOutlined, FullscreenOutlined, PlusOutlined, SaveOutlined, SettingOutlined } from '@ant-design/icons-vue'
 import { h } from 'vue'
 import { message } from 'ant-design-vue'
-import type { ImageType, Label, LabelPlaygroundData } from '~@/types/structure'
-import { getLabelPlaygroundApi, getLabelsApi } from '~@/api/labeling/playground'
+import type { ImageClassificationLabel, ImageType, LabelPlaygroundData, ObjectDetectionLabel } from '~@/types/structure'
+import { getLabelPlaygroundApi, getLabelsApi, uploadLabelingDataApi } from '~@/api/labeling/playground'
 import Bus from '~@/utils/bus'
 import { fullWindow } from '~@/utils/tools'
 
@@ -28,10 +28,15 @@ const formState = ref({
   current: 0,
   offset: 0,
   image: {
+    id: -1,
     url: '',
     height: 0,
     width: 0,
   },
+})
+const submitLabel = ref<any>({
+  name: '',
+  id: -1,
 })
 const left = computed(() => formState.value.offset * 10)
 const right = computed(() => Math.min(formState.value.offset * 10 + 9, data.value.capacity))
@@ -59,6 +64,15 @@ function handlePrev() {
     jump()
   }
 }
+async function handleSave() {
+  if (type.value === 'classification' && submitLabel.value) {
+    submitLabel.value.name = ''
+    await uploadLabelingDataApi(dsid.value, formState.value.image.id, submitLabel.value)
+  }
+  else if (type.value === 'detection' && submitLabel.value) {
+    submitLabel.value.x = 0
+  }
+}
 function update() {
   Bus.emit('on-update', toRaw(formState.value.image))
 }
@@ -79,12 +93,20 @@ function jump() {
     loadData()
   }
   formState.value.image = {
+    id: data.value.images[formState.value.current - formState.value.offset * 10].id,
     url: data.value.images[formState.value.current - formState.value.offset * 10].thumbnail,
     height: 500,
     width: 500,
   }
   update()
 }
+Bus.on('on-right-press', handleNext)
+Bus.on('on-left-press', handlePrev)
+Bus.on('on-save-press', handleSave)
+Bus.on('on-labels-select', (data: number) => {
+  if (submitLabel.value)
+    submitLabel.value.id = data
+})
 </script>
 
 <template>
@@ -116,7 +138,7 @@ function jump() {
             </a-tooltip>
           </div>
           <a-checkbox>标为无效数据 (W)</a-checkbox>
-          <a-button type="link" ghost size="small">
+          <a-button type="link" ghost size="small" @click="handleSave">
             <SaveOutlined />保存当前标注
           </a-button>
         </a-space>

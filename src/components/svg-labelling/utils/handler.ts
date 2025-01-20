@@ -3,9 +3,9 @@ import { Graph } from '@antv/x6'
 import { Transform } from '@antv/x6-plugin-transform'
 import { Selection } from '@antv/x6-plugin-selection'
 import { History } from '@antv/x6-plugin-history'
-import { Keyboard } from '@antv/x6-plugin-keyboard'
 import type { SizeType, entryType } from '~@/types/history'
 import { hexToRgba } from '~@/utils/tools'
+import Bus from '~@/utils/bus'
 
 const history = useHistoryStore()
 const config = useConfigStore()
@@ -49,10 +49,10 @@ export function graphInit(container: HTMLElement) {
     container,
     ...GRAPH_OPTIONS,
   })
+  registerKeys(container)
   registerPlugins(graph)
   registerNodes()
   registerEvents(graph)
-  registerKeys()
   return graph
 }
 
@@ -75,9 +75,6 @@ function registerPlugins(graph: Graph) {
       showNodeSelectionBox: true,
     }),
     new History({
-      enabled: true,
-    }),
-    new Keyboard({
       enabled: true,
     }),
   )
@@ -184,8 +181,23 @@ function registerNodes() {
   // register all nodes
 }
 
-function registerKeys() {
+function registerKeys(container: HTMLElement) {
   // register all keys
+  container.setAttribute('tabindex', '0')
+  container.addEventListener('keydown', (e: KeyboardEvent) => {
+    const key = e.key
+    switch (key) {
+      case 'ArrowRight':
+        Bus.emit('on-right-press')
+        break
+      case 'ArrowLeft':
+        Bus.emit('on-left-press')
+        break
+      case 's':
+        Bus.emit('on-save-press')
+        break
+    }
+  })
 }
 
 function switchBackground(graph: Graph, url: string, size: SizeType) {
