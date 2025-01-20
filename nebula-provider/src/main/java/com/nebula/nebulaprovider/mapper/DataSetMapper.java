@@ -47,4 +47,10 @@ public interface DataSetMapper {
 
     @Select("SELECT id, name, color, capacity FROM label WHERE dsid=#{id} AND name IN ${query}")
     List<LabelDataShort> getLabels(Integer id, String query);
+
+    @Select("SELECT ${key} FROM data WHERE id=#{id}")
+    Object getImagePropertyByPID(Integer id, String key);
+
+    @Select("SELECT ${key} FROM label WHERE id=#{id}")
+    Object getLabelPropertyByID(Integer id, String key);
 }

@@ -14,6 +14,6 @@ public class ImageAnnotationObject<T> implements Serializable {
 
     private Image image;
 
-    private List<T> annotations;
+    private T annotations;
 
 }

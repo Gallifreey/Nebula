@@ -13,7 +13,7 @@ public class Constant {
         SUFFIX_TABLE.put("jpg", "image/jpeg");
         SUFFIX_TABLE.put("png", "image/png");
         SUFFIX_TABLE.put("txt", "text/plain");
-        SUFFIX_TABLE.put("json", "text/plain");
+        SUFFIX_TABLE.put("json", "application/json");
     }
 
     public enum DATASET_TYPE{

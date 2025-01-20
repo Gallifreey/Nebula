@@ -68,4 +68,14 @@ public class DataSetService implements DataSetServiceImpl {
     public List<LabelDataShort> getLabels(Integer id, String query) {
         return dataSetMapper.getLabels(id, query);
     }
+
+    @Override
+    public Object getImagePropertyByPID(Integer id, String key) {
+        return dataSetMapper.getImagePropertyByPID(id, key);
+    }
+
+    @Override
+    public Object getLabelPropertyByID(Integer id, String key) {
+        return dataSetMapper.getLabelPropertyByID(id, key);
+    }
 }

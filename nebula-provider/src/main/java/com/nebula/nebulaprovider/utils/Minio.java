@@ -14,6 +14,7 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 
 import javax.validation.constraints.Min;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -143,6 +144,12 @@ public class Minio {
         StringBuilder lines = new StringBuilder();
         while ((line = bdr.readLine())!= null) lines.append(line).append("\n");
         return lines.toString();
+    }
+
+    public static void updateFileContentFromPath(MinioClient minioClient, String path, String content) throws Exception {
+        byte[] bytes = content.getBytes(StandardCharsets.UTF_8);
+        InputStream result = new ByteArrayInputStream(bytes);
+        upload(minioClient, result, path, bytes.length);
     }
 
 }

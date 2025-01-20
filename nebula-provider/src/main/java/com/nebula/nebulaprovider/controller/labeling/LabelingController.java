@@ -1,6 +1,12 @@
 package com.nebula.nebulaprovider.controller.labeling;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.nebula.nebulaprovider.entity.Result;
+import com.nebula.nebulaprovider.entity.dataset.Box2DLabel;
+import com.nebula.nebulaprovider.entity.dataset.ClassificationAnnotation;
+import com.nebula.nebulaprovider.entity.dataset.ClassificationLabel;
+import com.nebula.nebulaprovider.entity.dataset.Form.ImageAnnotationObject;
 import com.nebula.nebulaprovider.entity.dataset.Form.ImageDataShort;
 import com.nebula.nebulaprovider.entity.dataset.Form.LabelingPlaygroundData;
 import com.nebula.nebulaprovider.service.DataSetService;
@@ -12,6 +18,7 @@ import com.nebula.nebulaprovider.utils.Utils;
 import io.minio.MinioClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -70,5 +77,28 @@ public class LabelingController {
         String content = Minio.getFileContentFromPath(minioClient, path);
         List<String> strings = List.of(content.split("\n"));
         return Result.success(dataSetService.getLabels(id, Utils.generateQuery(strings)));
+    }
+
+    @PostMapping("/api/labeling/data/upload")
+    public Result uploadLabelingData(Integer id, Integer pid, String labels) throws Exception {
+        DATASET_TYPE type = DATASET_TYPE.valueOf(dataSetService.getSingleValue(id, "type"));
+        String name = dataSetService.getDatasetNameByDSID(id);
+        String imgName = (String) dataSetService.getImagePropertyByPID(pid, "name");
+        String path = LabelUtils.getLabelPath(imgName, name);
+        switch (type) {
+            case CLASSIFICATION:
+                String tempData = Minio.getFileContentFromPath(minioClient, path);
+                ClassificationLabel classificationLabel = JSON.parseObject(labels, ClassificationLabel.class);
+                ImageAnnotationObject<ClassificationAnnotation> imageAnnotationObject = JSONObject.parseObject(tempData, ImageAnnotationObject.class);
+                ClassificationAnnotation annotation = new ClassificationAnnotation();
+                annotation.setName((String) dataSetService.getLabelPropertyByID(classificationLabel.getId(), "name"));
+                imageAnnotationObject.setAnnotations(annotation);
+                Minio.updateFileContentFromPath(minioClient, path, JSONObject.toJSONString(imageAnnotationObject));
+                break;
+            case BOX_2D:
+                Box2DLabel box2DLabel = JSON.parseObject(labels, Box2DLabel.class);
+                break;
+        }
+        return Result.success();
     }
 }

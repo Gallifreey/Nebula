@@ -8,8 +8,8 @@ import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class ClassificationLabel implements Serializable {
+public class ClassificationAnnotation implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private Integer id;
+    private String name;
 }

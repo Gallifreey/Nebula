@@ -28,4 +28,8 @@ public interface DataSetServiceImpl {
     List<Integer> getLabelIDSets(Integer id, String query);
 
     List<LabelDataShort> getLabels(Integer id, String query);
+
+    Object getImagePropertyByPID(Integer id, String key);
+
+    Object getLabelPropertyByID(Integer id, String key);
 }

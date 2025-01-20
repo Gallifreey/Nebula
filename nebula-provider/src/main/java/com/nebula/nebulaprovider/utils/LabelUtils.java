@@ -28,7 +28,8 @@ public class LabelUtils {
         List<Integer> ids;
         List<ClassificationLabel> labels = new ArrayList<>();
         if (object != null) {
-            ids = dataSetService.getLabelIDSets(id, Utils.generateQuery(object.getAnnotations()));
+            List<Object> objects = List.of(new String[]{object.getAnnotations()});
+            ids = dataSetService.getLabelIDSets(id, Utils.generateQuery(objects));
             for (Integer id_: ids) {
                 ClassificationLabel label = new ClassificationLabel();
                 label.setId(id_);
