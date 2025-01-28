@@ -1,27 +1,17 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script lang="ts" setup>
 import type { Graph } from '@antv/x6'
+import type { SelectProps } from 'ant-design-vue'
 import { graphInit, switchToNext } from './utils/handler'
 import LabelMenu from './components/label-menu.vue'
 import type { PlaygroundData } from '~@/types/structure'
 import Bus from '~@/utils/bus'
+import { getValueFromObjArrays } from '~@/utils/tools'
 
-const props = defineProps({
-  data: {
-    type: Object as PropType<PlaygroundData['image']>,
-    required: false,
-    default: () => {
-      return {
-        url: 'https://www.mcmod.cn/static/public/images/logo.png?v=4',
-        width: 500,
-        height: 500,
-      }
-    },
-  },
-})
-const emits = defineEmits(['update:data'])
-const data = useVModel(props, 'data', emits)
+const type = ref('')
+const label = ref()
 const canvasDOM = ref()
+const config = useConfigStore()
 // const history = useHistoryStore()
 let graph: Graph
 function render(container: HTMLElement) {
@@ -29,40 +19,16 @@ function render(container: HTMLElement) {
 }
 onMounted(() => {
   graph = render(canvasDOM.value)
-  /*
-  switchToNext(graph, data.value.url, {
-    width: data.value.width,
-    height: data.value.height,
-  })
-  const node = graph.createNode({
-    shape: 'rect',
-    position: {
-      x: 100,
-      y: 100,
-    },
-    size: {
-      height: 100,
-      width: 100,
-    },
-    attrs: {
-      rect: {
-        'fill': 'rgba(100, 100, 255, 0.5)',
-        'stroke': 'black',
-        'strokeWidth': 1,
-      },
-      text: {
-        'fontSize': 14,
-        'fill': 'white',
-        'textAnchor': 'middle',
-        'textVerticalAnchor': 'middle',
-        'text': 'node',
-      },
-    },
-  })
-  graph.addNode(node)
-  */
 })
-Bus.on('on-update', (data: PlaygroundData['image']) => {
+Bus.on('on-labels-select', (data: number, options: SelectProps['options']) => {
+  if (data === -1)
+    label.value = null
+  if (options)
+    label.value = getValueFromObjArrays(options, 'value', 'label', data)
+})
+Bus.on('on-update', (data: PlaygroundData['image'], t: string) => {
+  type.value = t
+  config.set('currentPGType', t)
   switchToNext(graph, data.url, {
     width: data.width,
     height: data.height,
@@ -73,11 +39,28 @@ Bus.on('on-update', (data: PlaygroundData['image']) => {
 <template>
   <div class="canvas">
     <div ref="canvasDOM" class="container" />
+    <div v-if="type === 'classification'" class="classDOM">
+      {{ label }}
+    </div>
     <LabelMenu />
   </div>
 </template>
 
 <style lang="less" scoped>
+.classDOM{
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 60px;
+  width: 200px;
+  background: rgba(255, 255, 255, 0.2);
+  font-size: 26px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
 .canvas{
   position: relative;
 }

@@ -27,8 +27,9 @@ interface NumberModel {
 export function dsCreateApi(params: DatasetCreateFormState) {
   const formData = new FormData()
   formData.append('dataset', JSON.stringify(params))
-  for (const file of params.fileList)
-    formData.append('files', toRaw(file).originFileObj)
+  formData.append('dataFile', toRaw(params.dataFile[0]).originFileObj)
+  formData.append('labelFile', toRaw(params.labelFile[0]).originFileObj)
+  formData.append('classFile', toRaw(params.classFile[0]).originFileObj)
   return usePost<DSResultModel, FormData>('/data_manage/dataset', formData, {
     customDev: true,
     loading: true,

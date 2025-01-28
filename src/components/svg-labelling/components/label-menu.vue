@@ -3,7 +3,7 @@
 import type { SelectProps } from 'ant-design-vue'
 import type { Label } from '~@/types/structure'
 import { LabelPopoverTitle } from '~@/utils/constant'
-import { generateAntdSelectValues, generateArrayFromObjArrays } from '~@/utils/tools'
+import { generateAntdSelectValues, generateArrayFromObjArrays, getValueFromObjArrays } from '~@/utils/tools'
 import Bus from '~@/utils/bus'
 
 defineProps({
@@ -21,7 +21,7 @@ Bus.on('on-labels-update', (data: Label[]) => {
   options.value = generateAntdSelectValues(values, labels)
 })
 function onSelect(value: any) {
-  Bus.emit('on-labels-select', value)
+  Bus.emit('on-labels-select', value, getValueFromObjArrays(options.value, 'value', 'label', value))
 }
 </script>
 
@@ -36,7 +36,7 @@ function onSelect(value: any) {
     }"
   >
     <div class="header">
-      {{ LabelPopoverTitle[config.get('contextMenuTitleType')] }}
+      {{ config.get('contextMenuTitleType') }}
     </div>
     <div class="content">
       <span>类别</span>

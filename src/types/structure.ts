@@ -8,6 +8,7 @@ export interface DatasetInfo {
   name: string
   groupID: number
   createTime: string
+  labeled: number
   totalLabels: number
   size: number
   source: number
@@ -34,6 +35,7 @@ export interface ObjectDetectionLabel {
   height: number
 }
 
+export const ImageTypeKeys = ['classification', 'detection']
 export type ImageType = 'classification' | 'detection'
 
 export interface Image {
@@ -57,8 +59,10 @@ export interface ImageDataShortDetails {
 }
 
 export interface LabelPlaygroundData<T extends ImageType> {
-  images: Image[]
-  labels: T extends 'classification' ? ImageClassificationLabel[] : ObjectDetectionLabel[]
+  items: {
+    image: Image
+    annotation: T extends 'classification' ? ImageClassificationLabel : ObjectDetectionLabel
+  }[]
   capacity: number
 }
 
@@ -68,4 +72,9 @@ export interface PlaygroundData {
     height: number
     width: number
   }
+}
+
+export interface ClsCoveredPlaygroundData {
+  modified: boolean
+  label?: string
 }

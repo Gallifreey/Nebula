@@ -15,7 +15,9 @@ export interface DatasetCreateFormState {
   type: number
   labelStatus: number
   importType: number[]
-  fileList: any[]
+  dataFile: any[]
+  labelFile: any[]
+  classFile: any[]
   labelFormat?: number
   oid: number
   spid: number

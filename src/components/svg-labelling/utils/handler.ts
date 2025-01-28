@@ -3,7 +3,7 @@ import { Graph } from '@antv/x6'
 import { Transform } from '@antv/x6-plugin-transform'
 import { Selection } from '@antv/x6-plugin-selection'
 import { History } from '@antv/x6-plugin-history'
-import type { SizeType, entryType } from '~@/types/history'
+import type { BBOXEntry, SizeType, entryType } from '~@/types/history'
 import { hexToRgba } from '~@/utils/tools'
 import Bus from '~@/utils/bus'
 
@@ -49,10 +49,10 @@ export function graphInit(container: HTMLElement) {
     container,
     ...GRAPH_OPTIONS,
   })
-  registerKeys(container)
   registerPlugins(graph)
   registerNodes()
   registerEvents(graph)
+  registerKeys(container, graph)
   return graph
 }
 
@@ -109,6 +109,9 @@ function registerEvents(graph: Graph) {
       }, 'start')
       handleSelection(graph)
     }
+    else {
+      node.toFront()
+    }
   })
   graph.on('node:mousemove', ({ view }) => {
     if (history.isLabelling()) {
@@ -124,10 +127,12 @@ function registerEvents(graph: Graph) {
     history.setting.labelling = false
   })
   graph.on('node:contextmenu', ({ x, y }) => {
-    setting.popover = true
-    setting.menuPos = {
-      x: x + config.get('contextMenuWidth') / 2,
-      y,
+    if (config.get('currentPGType') === 'classification') {
+      setting.popover = true
+      setting.menuPos = {
+        x: x + config.get('contextMenuWidth') / 2,
+        y,
+      }
     }
   })
   graph.on('node:resizing', () => {
@@ -181,10 +186,10 @@ function registerNodes() {
   // register all nodes
 }
 
-function registerKeys(container: HTMLElement) {
+function registerKeys(container: HTMLElement, graph: Graph) {
   // register all keys
   container.setAttribute('tabindex', '0')
-  container.addEventListener('keydown', (e: KeyboardEvent) => {
+  container.addEventListener('keyup', (e: KeyboardEvent) => {
     const key = e.key
     switch (key) {
       case 'ArrowRight':
@@ -194,7 +199,12 @@ function registerKeys(container: HTMLElement) {
         Bus.emit('on-left-press')
         break
       case 's':
+      case 'S':
         Bus.emit('on-save-press')
+        break
+      case 'a':
+      case 'A':
+        Bus.emit('on-node-add', graph)
         break
     }
   })
@@ -212,9 +222,19 @@ function switchBackground(graph: Graph, url: string, size: SizeType) {
     zIndex: -1,
     id: BACKGROUND_ID,
   })
+  // 初始化节点
+  initNodes(graph)
 }
 
 export function switchToNext(graph: Graph, url: string, size: SizeType) {
+  // 保存历史
+  const nodes = graph.getNodes().filter((node) => {
+    return node.id !== BACKGROUND_ID
+  })
+  if (nodes) {
+    for (const node of nodes)
+      console.log(node.getBBox())
+  }
   switchBackground(graph, url, size)
   graph.centerContent()
 }
@@ -255,40 +275,55 @@ export function handleSelectionMove(graph: Graph) {
   }
 }
 
-export function createEntry(graph: Graph, args: entryType) {
-  if (args.type === 'bbox') {
-    const node = graph.createNode({
-      shape: 'rect',
-      position: {
-        x: args.bbox.x,
-        y: args.bbox.y,
+export function createEntry(graph: Graph, entry: entryType) {
+  if (entry.data.type === 'bbox') {
+    graph.addNode(entry)
+    history.push(entry, config.get('curID'))
+  }
+}
+
+Bus.on('on-node-add', (graph: Graph) => {
+  if (config.get('currentPGType') === 'detection')
+    createBBOX(graph)
+})
+
+function createBBOX(graph: Graph) {
+  const node = {
+    shape: 'rect',
+    position: {
+      x: 0,
+      y: 0,
+    },
+    size: {
+      height: 100,
+      width: 100,
+    },
+    attrs: {
+      rect: {
+        'fill': hexToRgba('#6565ff', 0.5),
+        'stroke': 'black',
+        'strokeWidth': 1,
       },
-      size: {
-        height: args.bbox.height,
-        width: args.bbox.width,
+      text: {
+        'fontSize': 14,
+        'fill': 'white',
+        'textAnchor': 'middle',
+        'textVerticalAnchor': 'middle',
+        'text': '新建标签',
       },
-      attrs: {
-        rect: {
-          'fill': hexToRgba(args.color, 0.5),
-          'stroke': args.color,
-          'strokeWidth': 1,
-        },
-        text: {
-          'fontSize': 14,
-          'fill': 'white',
-          'textAnchor': 'middle',
-          'textVerticalAnchor': 'middle',
-          'text': args.label,
-        },
-      },
-    })
-    graph.addNode(node)
-    history.push({
-      id: node.id,
+    },
+    data: {
+      id: -1,
       type: 'bbox',
-      bbox: node.getBBox(),
-      label: args.label,
-      color: args.color,
-    })
+    },
+  }
+  createEntry(graph, node)
+}
+
+function initNodes(graph: Graph) {
+  const curID = config.get('curID')
+  const entry = history.getByIndex(curID)
+  if (entry) {
+
   }
 }

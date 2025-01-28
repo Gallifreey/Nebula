@@ -1,7 +1,7 @@
 import type { HistoryType } from '~@/types/history'
 
 export const defaultHistorySetting: HistoryType = {
-  entries: [],
+  entries: [[]],
   clicked: false,
   popover: false,
   labelling: false,

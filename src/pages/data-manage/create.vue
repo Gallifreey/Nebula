@@ -26,7 +26,9 @@ const formState = ref<DatasetCreateFormState>({
   version: 1,
   labelStatus: 0,
   importType: [0],
-  fileList: [],
+  dataFile: [],
+  labelFile: [],
+  classFile: [],
   oid: id.value || -1,
   spid: 1,
 })
@@ -116,26 +118,39 @@ async function handleCreate() {
           <a-form-item name="importType" label="导入方式">
             <a-cascader v-model:value="formState.importType" :options="formState.labelStatus ? importTypeHasLabelStaticSelectData : importTypeStaticSelectData" :allow-clear="false" />
           </a-form-item>
-          <a-form-item v-if="formState.labelStatus === 1" name="labelFormat" label="标注格式">
-            <a-radio-group v-model:value="formState.labelFormat">
-              <a-radio :value="0">
-                默认标注格式
-              </a-radio>
-              <a-radio :value="1">
-                XML格式 (voc数据集)
-              </a-radio>
-              <a-radio :value="2">
-                JSON格式 (coco数据集)
-              </a-radio>
-            </a-radio-group>
-          </a-form-item>
-          <a-form-item name="fileList" label="上传文件">
+          <a-form-item name="dataFile" label="上传数据">
             <a-upload
-              v-model:file-list="formState.fileList"
+              v-model:file-list="formState.dataFile"
               :before-upload="beforeUpload"
               :headers="{ authorization: 'authorization-text' }"
               :max-count="1"
               accept=".zip"
+            >
+              <a-button type="primary">
+                <UploadOutlined /> 上传
+              </a-button>
+            </a-upload>
+          </a-form-item>
+          <a-form-item name="labelFile" label="上传标签">
+            <a-upload
+              v-model:file-list="formState.labelFile"
+              :before-upload="beforeUpload"
+              :headers="{ authorization: 'authorization-text' }"
+              :max-count="1"
+              accept=".zip"
+            >
+              <a-button type="primary">
+                <UploadOutlined /> 上传
+              </a-button>
+            </a-upload>
+          </a-form-item>
+          <a-form-item name="classFile" label="上传类型">
+            <a-upload
+              v-model:file-list="formState.classFile"
+              :before-upload="beforeUpload"
+              :headers="{ authorization: 'authorization-text' }"
+              :max-count="1"
+              accept=".txt"
             >
               <a-button type="primary">
                 <UploadOutlined /> 上传

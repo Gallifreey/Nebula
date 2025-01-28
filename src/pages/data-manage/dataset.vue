@@ -6,6 +6,7 @@ import { DataSetImportStatusMap, sourceStaticSelectData, typeStaticSelectData } 
 import { getDataSetApi } from '~@/api/data-manage/dataset'
 import { findLabelByValue } from '~@/utils/tools'
 import type { DatasetInfo } from '~@/types/structure'
+import { ImageTypeKeys } from '~@/types/structure'
 
 const formState = ref<DatasetFormState>({
   type: [],
@@ -28,11 +29,12 @@ function handlePreviewDSDetails(id: number) {
     },
   })
 }
-function handleLabeling(id: number) {
+function handleLabeling(id: number, type: string) {
   router.push({
     path: '/data-labeling/online',
     query: {
       id,
+      type,
     },
   })
 }
@@ -89,12 +91,6 @@ onMounted(() => handleDataSetInfoView())
                     <div class="info-title">
                       {{ item.name }}
                     </div>
-                    <div class="groupid">
-                      <div class="form-item-title">
-                        数据集组ID
-                      </div>
-                      {{ item.groupID }}
-                    </div>
                   </a-space>
                 </div>
                 <div class="info-right">
@@ -137,13 +133,13 @@ onMounted(() => handleDataSetInfoView())
                           {{ item.capacity }}
                         </a-descriptions-item>
                         <a-descriptions-item label="已标注" :span="2">
-                          {{ item.labelingStatus }} (进度 {{ Math.ceil((record.labelingStatus / record.capacity) * 100) }}%)
+                          {{ item.labeled }} (进度 {{ Math.ceil((record.labeled / record.capacity) * 100) }}%)
                         </a-descriptions-item>
                         <a-descriptions-item label="标签个数" :span="1">
                           {{ item.totalLabels }}
                         </a-descriptions-item>
                         <a-descriptions-item label="大小" :span="2">
-                          {{ item.size }}M
+                          {{ item.size }}MB
                         </a-descriptions-item>
                       </a-descriptions>
                       <a-descriptions title="数据清洗">
@@ -178,7 +174,7 @@ onMounted(() => handleDataSetInfoView())
                 <a-badge status="success" :text="DataSetImportStatusMap.get(record.importStatus)" />
               </template>
               <template v-if="column.dataIndex === 'labelStatus'">
-                {{ Math.ceil((record.labelStatus / record.capacity) * 100) }}%  ({{ record.labelStatus }}/{{ record.capacity }})
+                {{ Math.ceil((record.labeled / record.capacity) * 100) }}%  ({{ record.labeled }}/{{ record.capacity }})
               </template>
               <template v-if="column.dataIndex === 'action'">
                 <a-space>
@@ -191,7 +187,7 @@ onMounted(() => handleDataSetInfoView())
                   <a-button type="link" size="small">
                     导出
                   </a-button>
-                  <a-button type="link" size="small" @click="handleLabeling(record.id)">
+                  <a-button type="link" size="small" @click="handleLabeling(record.id, ImageTypeKeys[item.type - 1])">
                     标注
                   </a-button>
                   <a-button type="link" size="small">

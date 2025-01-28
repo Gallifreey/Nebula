@@ -6,9 +6,11 @@ import type { Label } from '~@/types/structure'
 import { getLabelsApi } from '~@/api/labeling/playground'
 import Bus from '~@/utils/bus'
 
-const router = useRoute()
-const id = router.query.id
+const route = useRoute()
+const id = route.query.id
+const type = route.query.type
 const labels = ref<Label[]>([])
+const config = useConfigStore()
 let dsid = -1
 if (typeof id === 'string') {
   dsid = Number.parseInt(id, 10)
@@ -19,14 +21,14 @@ else {
   console.error('Invalid id: id is not a string')
 }
 onMounted(async () => {
-  const d = (await getLabelsApi(dsid)).data
-  if (d) {
-    labels.value = d
-    Bus.emit('on-labels-update', d)
+  if (dsid !== -1) {
+    const d = (await getLabelsApi(dsid)).data
+    if (d) {
+      labels.value = d
+      Bus.emit('on-labels-update', d)
+      config.set('contextMenuTitleType', type)
+    }
   }
-})
-Bus.on('on-labels-select', (data: number) => {
-  console.log(data)
 })
 </script>
 
@@ -48,7 +50,7 @@ Bus.on('on-labels-select', (data: number) => {
     <a-card id="labeling-pg">
       <a-row :gutter="20">
         <a-col :span="18">
-          <Playground :id="dsid" type="classification" />
+          <Playground :id="dsid" :type="type" />
         </a-col>
         <a-col :span="6">
           <div class="header">

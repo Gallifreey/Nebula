@@ -17,12 +17,13 @@ const props = defineProps({
     required: true,
   },
 })
+const config = useConfigStore()
+const router = useRouter()
 const dsid = computed(() => props.id)
 const type = computed(() => props.type)
 const data = ref<LabelPlaygroundData<'classification'> | LabelPlaygroundData<'detection'>>({
   capacity: 0,
-  images: [],
-  labels: [],
+  items: [],
 })
 const formState = ref({
   current: 0,
@@ -34,10 +35,7 @@ const formState = ref({
     width: 0,
   },
 })
-const submitLabel = ref<any>({
-  name: '',
-  id: -1,
-})
+const submitLabel = ref<any>({})
 const left = computed(() => formState.value.offset * 10)
 const right = computed(() => Math.min(formState.value.offset * 10 + 9, data.value.capacity))
 onMounted(async () => {
@@ -52,6 +50,7 @@ function handleNext() {
   }
   else {
     formState.value.current++
+    config.set('curID', config.get('curID') + 1)
     jump()
   }
 }
@@ -61,6 +60,7 @@ function handlePrev() {
   }
   else {
     formState.value.current--
+    config.set('curID', config.get('curID') - 1)
     jump()
   }
 }
@@ -74,9 +74,14 @@ async function handleSave() {
   }
 }
 function update() {
-  Bus.emit('on-update', toRaw(formState.value.image))
+  Bus.emit('on-update', toRaw(formState.value.image), type.value)
 }
 async function loadData() {
+  if (dsid.value === -1) {
+    message.info('请选择一个数据集并标注')
+    router.push('/data-manage/dataset')
+    return
+  }
   const d = (await getLabelPlaygroundApi(dsid.value, 'classification', formState.value.offset * 10)).data
   if (d) {
     data.value = d
@@ -84,6 +89,8 @@ async function loadData() {
   }
 }
 function jump() {
+  // Bus.emit('on-labels-switch', formState.value.current - formState.value.offset * 10)
+  clean()
   if (left.value > formState.value.current) {
     formState.value.offset--
     loadData()
@@ -93,8 +100,8 @@ function jump() {
     loadData()
   }
   formState.value.image = {
-    id: data.value.images[formState.value.current - formState.value.offset * 10].id,
-    url: data.value.images[formState.value.current - formState.value.offset * 10].thumbnail,
+    id: data.value.items[formState.value.current - formState.value.offset * 10].image.id,
+    url: data.value.items[formState.value.current - formState.value.offset * 10].image.thumbnail,
     height: 500,
     width: 500,
   }
@@ -103,10 +110,16 @@ function jump() {
 Bus.on('on-right-press', handleNext)
 Bus.on('on-left-press', handlePrev)
 Bus.on('on-save-press', handleSave)
-Bus.on('on-labels-select', (data: number) => {
+Bus.on('on-labels-select', (data: number, _text: string) => {
   if (submitLabel.value)
     submitLabel.value.id = data
 })
+function validate() {
+
+}
+function clean() {
+  Bus.emit('on-labels-select', -1)
+}
 </script>
 
 <template>
@@ -126,23 +139,18 @@ Bus.on('on-labels-select', (data: number) => {
           </a-tooltip>
         </a-space>
       </div>
-      <div class="navbar">
-        <a-space>
-          <div>
-            <a-tooltip title="上一张">
-              <a-button type="text" :icon="h(ArrowLeftOutlined)" size="small" @click="handlePrev" />
-            </a-tooltip>
-            第 {{ formState.current + 1 }} 张 / 共 {{ data.capacity }} 张
-            <a-tooltip title="下一张">
-              <a-button type="text" :icon="h(ArrowRightOutlined)" size="small" @click="handleNext" />
-            </a-tooltip>
-          </div>
-          <a-checkbox>标为无效数据 (W)</a-checkbox>
-          <a-button type="link" ghost size="small" @click="handleSave">
-            <SaveOutlined />保存当前标注
-          </a-button>
-        </a-space>
+      <div>
+        <a-tooltip title="上一张">
+          <a-button type="text" :icon="h(ArrowLeftOutlined)" size="small" @click="handlePrev" />
+        </a-tooltip>
+        第 {{ formState.current + 1 }} 张 / 共 {{ data.capacity }} 张
+        <a-tooltip title="下一张">
+          <a-button type="text" :icon="h(ArrowRightOutlined)" size="small" @click="handleNext" />
+        </a-tooltip>
       </div>
+      <a-button type="link" ghost size="small" @click="handleSave">
+        <SaveOutlined />保存当前标注
+      </a-button>
     </div>
     <div class="canvas">
       <SvgLabelling class="pg" />

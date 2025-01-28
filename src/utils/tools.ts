@@ -122,3 +122,16 @@ export function generateArrayFromObjArrays<O, K extends keyof O>(obj: O[], key: 
   })
   return arr
 }
+
+export function getValueFromObjArrays<O, K extends keyof O>(obj: O[] | undefined | null, key1: K, key2: K, value: O[K]) {
+  if (obj === undefined || obj === null)
+    return null
+  let res = null
+  for (const o of obj) {
+    if (o[key1] === value) {
+      res = o[key2]
+      break
+    }
+  }
+  return res
+}

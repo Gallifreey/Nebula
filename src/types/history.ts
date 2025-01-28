@@ -1,3 +1,4 @@
+import type { Node } from '@antv/x6'
 import type { PointType } from './canvas'
 
 export interface BBOX extends PointType, SizeType {}
@@ -45,12 +46,12 @@ export interface LineEntry extends HistoryEntryBase {
   lines: LineType[]
 }
 
-export type entryType = BBOXEntry | KeyPointsEntry | SegmentEntry | SolidEntry | LineEntry
+export type entryType = Node.Metadata | KeyPointsEntry | SegmentEntry | SolidEntry | LineEntry
 
 export type EntryType = entryType['type']
 
 export interface HistoryType {
-  entries: entryType[]
+  entries: entryType[][]
   clicked: boolean
   popover: boolean
   labelling: boolean
