@@ -28,3 +28,9 @@ export interface LabelCreateFormState {
   color: string
   id: number
 }
+
+export interface DataCleanTaskFormData {
+  dsid: number
+  name: string
+  methods: string[]
+}

@@ -3,7 +3,7 @@ import { DeleteOutlined, EllipsisOutlined, InfoCircleOutlined, PlusOutlined } fr
 import type { DatasetFormState } from '~@/types/form'
 import { DatasetColumn } from '~@/types/columns'
 import { DataSetImportStatusMap, sourceStaticSelectData, typeStaticSelectData } from '~@/types/static'
-import { getDataSetApi } from '~@/api/data-manage/dataset'
+import { downloadDatasetByID, getDataSetApi } from '~@/api/data-manage/dataset'
 import { findLabelByValue } from '~@/utils/tools'
 import type { DatasetInfo } from '~@/types/structure'
 import { ImageTypeKeys } from '~@/types/structure'
@@ -38,12 +38,24 @@ function handleLabeling(id: number, type: string) {
     },
   })
 }
+function handleDataAnaReport(id: number) {
+  router.push({
+    path: '/data-manage/report',
+    query: {
+      id,
+    },
+  })
+}
+
 async function handleDataSetInfoView() {
   const data = await getDataSetApi(1)
   if (data.data) {
     testDataSet.value = data.data
     loading.value = false
   }
+}
+function handleDownloadDataSet(id: number) {
+  downloadDatasetByID(id)
 }
 onMounted(() => handleDataSetInfoView())
 </script>
@@ -184,7 +196,7 @@ onMounted(() => handleDataSetInfoView())
                   <a-button type="link" size="small">
                     导入
                   </a-button>
-                  <a-button type="link" size="small">
+                  <a-button type="link" size="small" @click="handleDownloadDataSet(record.id)">
                     导出
                   </a-button>
                   <a-button type="link" size="small" @click="handleLabeling(record.id, ImageTypeKeys[item.type - 1])">
@@ -197,7 +209,7 @@ onMounted(() => handleDataSetInfoView())
                           <a-menu-item>
                             清洗
                           </a-menu-item>
-                          <a-menu-item>
+                          <a-menu-item @click="handleDataAnaReport(record.id)">
                             质检报告
                           </a-menu-item>
                         </a-menu>

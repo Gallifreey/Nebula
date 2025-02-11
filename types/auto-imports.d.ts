@@ -313,6 +313,7 @@ declare global {
   const useWakeLock: typeof import('@vueuse/core')['useWakeLock']
   const useWebNotification: typeof import('@vueuse/core')['useWebNotification']
   const useWebSocket: typeof import('@vueuse/core')['useWebSocket']
+  const useWebSocketStore: typeof import('../src/stores/websocket')['useWebSocketStore']
   const useWebWorker: typeof import('@vueuse/core')['useWebWorker']
   const useWebWorkerFn: typeof import('@vueuse/core')['useWebWorkerFn']
   const useWindowFocus: typeof import('@vueuse/core')['useWindowFocus']

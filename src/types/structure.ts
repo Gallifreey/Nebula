@@ -78,3 +78,61 @@ export interface ClsCoveredPlaygroundData {
   modified: boolean
   label?: string
 }
+
+export interface DataCleanTaskInfo {
+  id: number
+  name: string
+  start_time: string
+  finished_time: string
+  methods: string
+  status: number
+  log_id: number
+  dsid: number
+  oid: number
+}
+
+export interface DataAugmentTaskInfo {
+  id: number
+  name: string
+  start_time: string
+  finished_time: string
+  methods: string
+  status: number
+  dsid: number
+  oid: number
+}
+
+export interface DataCleanReport {
+  methods: number[]
+  blurry?: Image[]
+  size?: Image[]
+  shape?: Image[]
+  brightness?: Image[]
+  contrast?: Image[]
+  color?: Image[]
+  low_information?: Image[]
+  duplicate?: Image[]
+}
+
+export interface PieData {
+  legendData: string[]
+  seriesData: number[]
+}
+
+export interface ChartData {
+  seriesData: number[]
+  xAxisData: number[]
+}
+
+export interface RawChartData {
+  label: any
+  value: number
+}
+
+export interface AnalyiseReport {
+  entityMode: PieData
+  entityResolution: ChartData
+  entityAspectRatio: ChartData
+  entityClarity: ChartData
+  entityColorCast: ChartData
+}

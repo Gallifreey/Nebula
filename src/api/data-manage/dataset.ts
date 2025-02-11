@@ -1,5 +1,6 @@
 import type { DatasetCreateFormState, LabelCreateFormState } from '~@/types/form'
-import type { DatasetInfo, ImageDataShortDetails, ImageType } from '~@/types/structure'
+import type { AnalyiseReport, DatasetInfo, ImageDataShortDetails, ImageType } from '~@/types/structure'
+import { useGetDownload } from '~@/utils/request'
 
 export interface DSResultModel {
   status: string
@@ -70,5 +71,34 @@ export function addNewLabelApi(label: LabelCreateFormState) {
   return usePost<DSResultModel, LabelCreateFormState>('/data_manage/labels', label, {
     customDev: true,
     loading: true,
+  })
+}
+
+export function getDatasetNameAndID(id: number) {
+  return useGet<{
+    value: number
+    label: string
+  }[], {
+    id: number
+  }>('/data_manage/list', {
+    id,
+  })
+}
+
+export function downloadDatasetByID(id: number) {
+  useGetDownload('http://localhost:8081/api/data_manage/download', {
+    id,
+  })()
+}
+
+// dsid 数据集ID
+export function getAnaReport(dsid: number) {
+  return usePost<AnalyiseReport, {
+    dsid: number
+  }>('/report', {
+    dsid,
+  }, {
+    type: 'task',
+    customDev: true,
   })
 }

@@ -2,6 +2,7 @@ import { get } from 'lodash-es'
 import type { SelectProps } from 'ant-design-vue'
 import router from '@/router'
 import type { PointType } from '~@/types/canvas'
+import type { ChartData, PieData, RawChartData } from '~@/types/structure'
 
 export function getQueryParam(param: string | string[], defaultVal = '') {
   const query = router.currentRoute.value?.query ?? {}
@@ -134,4 +135,62 @@ export function getValueFromObjArrays<O, K extends keyof O>(obj: O[] | undefined
     }
   }
   return res
+}
+
+type KeyboardCallback = (pressedKeys: string) => void
+
+export function listenKeyboardEvents(element: HTMLElement, callback: KeyboardCallback) {
+  const pressedKeys: string[] = []
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (!pressedKeys.includes(event.key)) {
+      pressedKeys.push(event.key)
+      callback(pressedKeys.join(''))
+    }
+  }
+
+  const handleKeyUp = (event: KeyboardEvent) => {
+    const index = pressedKeys.indexOf(event.key)
+    if (index !== -1) {
+      pressedKeys.splice(index, 1)
+      callback(pressedKeys.join(''))
+    }
+  }
+
+  element.addEventListener('keydown', handleKeyDown)
+  element.addEventListener('keyup', handleKeyUp)
+
+  // 提供一个函数来移除监听器
+  const removeListeners = () => {
+    element.removeEventListener('keydown', handleKeyDown)
+    element.removeEventListener('keyup', handleKeyUp)
+  }
+
+  return removeListeners
+}
+
+export function changeChartData2G2PlotData(data: ChartData) {
+  const data_ = []
+  data_.push({
+    label: data.xAxisData[0],
+    value: 0,
+  })
+  for (let i = 1; i < data.xAxisData.length; i++) {
+    data_.push({
+      label: data.xAxisData[i],
+      value: data.seriesData[i - 1],
+    })
+  }
+  return data_
+}
+
+export function changePieData2G2PlotData(data: PieData) {
+  const data_: RawChartData[] = []
+  for (let i = 0; i < data.legendData.length; i++) {
+    data_.push({
+      label: data.legendData[i],
+      value: data.seriesData[i],
+    })
+  }
+  return data_
 }

@@ -12,11 +12,16 @@ const baseSrc = fileURLToPath(new URL('./src', import.meta.url))
 export default ({ mode }: ConfigEnv): UserConfig => {
   const env = loadEnv(mode, process.cwd())
   const proxyObj = {}
-  if (mode === 'development' && env.VITE_APP_BASE_API_DEV && env.VITE_APP_BASE_URL_DEV) {
+  if (mode === 'development' && env.VITE_APP_BASE_API_DEV && env.VITE_APP_BASE_URL_DEV && env.VITE_APP_BASE_API2_DEV && env.VITE_APP_BASE_URL2_DEV) {
     proxyObj[env.VITE_APP_BASE_API_DEV] = {
       target: env.VITE_APP_BASE_URL_DEV,
       changeOrigin: true,
       rewrite: path => path.replace(new RegExp(`^${env.VITE_APP_BASE_API_DEV}`), ''),
+    }
+    proxyObj[env.VITE_APP_BASE_API2_DEV] = {
+      target: env.VITE_APP_BASE_URL2_DEV,
+      changeOrigin: true,
+      rewrite: path => path.replace(new RegExp(`^${env.VITE_APP_BASE_API2_DEV}`), ''),
     }
   }
   return {
@@ -91,15 +96,29 @@ export default ({ mode }: ConfigEnv): UserConfig => {
       },
     },
     server: {
-      port: 6678,
       host: '0.0.0.0',
       proxy: {
-        ...proxyObj,
-        // [env.VITE_APP_BASE_API]: {
-        //   target: env.VITE_APP_BASE_URL,
-        //   changeOrigin: true,
-        //   rewrite: path => path.replace(new RegExp(`^${env.VITE_APP_BASE_API}`), ''),
-        // },
+        '/api': {
+          target: 'http://localhost:8081/api', // 设置后端接口的访问地址
+          changeOrigin: true,
+          rewrite: (path) => {
+            console.log(1)
+            console.log('Original path:', path)
+            const newPath = path.replace(/^\/api/, '')
+            console.log('Rewritten path:', newPath)
+            return newPath
+          },
+        },
+        '/api_sim': {
+          target: 'http://localhost:8081/api_sim', // 设置后端接口的访问地址
+          changeOrigin: true,
+          rewrite: (path) => {
+            console.log('Original path:', path)
+            const newPath = path.replace(/^\/api_sim/, '')
+            console.log('Rewritten path:', newPath)
+            return newPath
+          },
+        },
       },
     },
     test: {
