@@ -154,6 +154,8 @@ declare global {
   const useBreakpoints: typeof import('@vueuse/core')['useBreakpoints']
   const useBroadcastChannel: typeof import('@vueuse/core')['useBroadcastChannel']
   const useBrowserLocation: typeof import('@vueuse/core')['useBrowserLocation']
+  const useBuStore: typeof import('../src/stores/buffer')['useBuStore']
+  const useBufferStore: typeof import('../src/stores/buffer')['useBufferStore']
   const useCStore: typeof import('../src/stores/config')['useCStore']
   const useCached: typeof import('@vueuse/core')['useCached']
   const useCanvasStore: typeof import('../src/stores/canvas')['useCanvasStore']

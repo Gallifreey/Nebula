@@ -194,3 +194,11 @@ export function changePieData2G2PlotData(data: PieData) {
   }
   return data_
 }
+
+export function pickeFromObject2Array<T, K extends keyof T>(obj: T[], key: K) {
+  const res: T[K][] = []
+  obj.forEach((element) => {
+    res.push(element[key])
+  })
+  return res
+}

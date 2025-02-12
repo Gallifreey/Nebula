@@ -21,7 +21,7 @@ Bus.on('on-labels-update', (data: Label[]) => {
   options.value = generateAntdSelectValues(values, labels)
 })
 function onSelect(value: any) {
-  Bus.emit('on-labels-select', value, getValueFromObjArrays(options.value, 'value', 'label', value))
+  Bus.emit('on-labels-select', value, getValueFromObjArrays(options.value, 'value', 'label', value), config.get('contextMenuTitleType'))
 }
 </script>
 

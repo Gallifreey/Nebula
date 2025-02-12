@@ -24,6 +24,7 @@ export interface Label {
 export interface ImageClassificationLabel {
   name: string
   id: number
+  did: number
 }
 
 export interface ObjectDetectionLabel {
@@ -33,6 +34,7 @@ export interface ObjectDetectionLabel {
   y: number
   width: number
   height: number
+  did: number
 }
 
 export const ImageTypeKeys = ['classification', 'detection']
@@ -136,3 +138,5 @@ export interface AnalyiseReport {
   entityClarity: ChartData
   entityColorCast: ChartData
 }
+
+export type AnnotationType = ImageClassificationLabel | ObjectDetectionLabel

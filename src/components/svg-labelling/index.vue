@@ -4,7 +4,7 @@ import type { Graph } from '@antv/x6'
 import type { SelectProps } from 'ant-design-vue'
 import { graphInit, switchToNext } from './utils/handler'
 import LabelMenu from './components/label-menu.vue'
-import type { PlaygroundData } from '~@/types/structure'
+import type { ImageType, PlaygroundData } from '~@/types/structure'
 import Bus from '~@/utils/bus'
 import { getValueFromObjArrays } from '~@/utils/tools'
 
@@ -12,6 +12,7 @@ const type = ref('')
 const label = ref()
 const canvasDOM = ref()
 const config = useConfigStore()
+const buffer = useBufferStore()
 // const history = useHistoryStore()
 let graph: Graph
 function render(container: HTMLElement) {
@@ -20,11 +21,14 @@ function render(container: HTMLElement) {
 onMounted(() => {
   graph = render(canvasDOM.value)
 })
-Bus.on('on-labels-select', (data: number, options: SelectProps['options']) => {
-  if (data === -1)
-    label.value = null
-  if (options)
-    label.value = getValueFromObjArrays(options, 'value', 'label', data)
+Bus.on('on-labels-select', (value: number, name: string, type: ImageType) => {
+  switch (type) {
+    case 'classification':
+      buffer.updateCurrentData(-1, type, {
+        name,
+        id: value,
+      })
+  }
 })
 Bus.on('on-update', (data: PlaygroundData['image'], t: string) => {
   type.value = t
@@ -40,7 +44,7 @@ Bus.on('on-update', (data: PlaygroundData['image'], t: string) => {
   <div class="canvas">
     <div ref="canvasDOM" class="container" />
     <div v-if="type === 'classification'" class="classDOM">
-      {{ label }}
+      {{ buffer.currentData?.name }}
     </div>
     <LabelMenu />
   </div>

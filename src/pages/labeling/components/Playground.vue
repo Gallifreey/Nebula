@@ -2,10 +2,10 @@
 import { ArrowLeftOutlined, ArrowRightOutlined, DeleteOutlined, FullscreenOutlined, PlusOutlined, SaveOutlined, SettingOutlined } from '@ant-design/icons-vue'
 import { h } from 'vue'
 import { message } from 'ant-design-vue'
-import type { ImageClassificationLabel, ImageType, LabelPlaygroundData, ObjectDetectionLabel } from '~@/types/structure'
-import { getLabelPlaygroundApi, getLabelsApi, uploadLabelingDataApi } from '~@/api/labeling/playground'
+import type { ImageType, LabelPlaygroundData } from '~@/types/structure'
+import { getLabelPlaygroundApi, uploadLabelingDataApi } from '~@/api/labeling/playground'
 import Bus from '~@/utils/bus'
-import { fullWindow } from '~@/utils/tools'
+import { fullWindow, pickeFromObject2Array } from '~@/utils/tools'
 
 const props = defineProps({
   id: {
@@ -19,6 +19,7 @@ const props = defineProps({
 })
 const config = useConfigStore()
 const router = useRouter()
+const buffer = useBufferStore()
 const dsid = computed(() => props.id)
 const type = computed(() => props.type)
 const data = ref<LabelPlaygroundData<'classification'> | LabelPlaygroundData<'detection'>>({
@@ -35,7 +36,6 @@ const formState = ref({
     width: 0,
   },
 })
-const submitLabel = ref<any>({})
 const left = computed(() => formState.value.offset * 10)
 const right = computed(() => Math.min(formState.value.offset * 10 + 9, data.value.capacity))
 onMounted(async () => {
@@ -65,12 +65,11 @@ function handlePrev() {
   }
 }
 async function handleSave() {
-  if (type.value === 'classification' && submitLabel.value) {
-    submitLabel.value.name = ''
-    await uploadLabelingDataApi(dsid.value, formState.value.image.id, submitLabel.value)
-  }
-  else if (type.value === 'detection' && submitLabel.value) {
-    submitLabel.value.x = 0
+  if (type.value === 'classification' && buffer.currentData) {
+    await uploadLabelingDataApi(dsid.value, formState.value.image.id, {
+      id: buffer.currentData.id,
+      did: data.value.items[formState.value.current - formState.value.offset * 10].image.id,
+    })
   }
 }
 function update() {
@@ -82,15 +81,16 @@ async function loadData() {
     router.push('/data-manage/dataset')
     return
   }
-  const d = (await getLabelPlaygroundApi(dsid.value, 'classification', formState.value.offset * 10)).data
+  const d = (await getLabelPlaygroundApi(dsid.value, type.value, formState.value.offset * 10)).data
   if (d) {
     data.value = d
     jump()
+    buffer.initBuffer(pickeFromObject2Array(d.items, 'annotation'))
   }
 }
 function jump() {
   // Bus.emit('on-labels-switch', formState.value.current - formState.value.offset * 10)
-  clean()
+  buffer.setCurrentData(formState.value.current - formState.value.offset * 10)
   if (left.value > formState.value.current) {
     formState.value.offset--
     loadData()
@@ -110,16 +110,6 @@ function jump() {
 Bus.on('on-right-press', handleNext)
 Bus.on('on-left-press', handlePrev)
 Bus.on('on-save-press', handleSave)
-Bus.on('on-labels-select', (data: number, _text: string) => {
-  if (submitLabel.value)
-    submitLabel.value.id = data
-})
-function validate() {
-
-}
-function clean() {
-  Bus.emit('on-labels-select', -1)
-}
 </script>
 
 <template>
@@ -151,6 +141,7 @@ function clean() {
       <a-button type="link" ghost size="small" @click="handleSave">
         <SaveOutlined />保存当前标注
       </a-button>
+      {{ buffer.setting.annotationBuffer }}
     </div>
     <div class="canvas">
       <SvgLabelling class="pg" />
