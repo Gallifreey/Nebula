@@ -38,7 +38,7 @@ const formState = ref({
 })
 const left = computed(() => formState.value.offset * 10)
 const right = computed(() => Math.min(formState.value.offset * 10 + 9, data.value.capacity))
-onMounted(async () => {
+onMounted(() => {
   loadData()
 })
 function handleFullScreen() {

@@ -4,11 +4,12 @@ import { Transform } from '@antv/x6-plugin-transform'
 import { Selection } from '@antv/x6-plugin-selection'
 import { History } from '@antv/x6-plugin-history'
 import type { BBOXEntry, SizeType, entryType } from '~@/types/history'
-import { hexToRgba } from '~@/utils/tools'
+import { hexToRgba, updateByUniqueID } from '~@/utils/tools'
 import Bus from '~@/utils/bus'
 
 const history = useHistoryStore()
 const config = useConfigStore()
+const buffer = useBufferStore()
 const stack: Array<[string, any]> = []
 const MENU_PADDING = 10
 export const BACKGROUND_ID = 'bg_image'
@@ -83,7 +84,7 @@ function registerPlugins(graph: Graph) {
 function registerEvents(graph: Graph) {
   // register all events
   const setting = history.setting
-  graph.on('node:click', ({ view }) => {
+  graph.on('node:click', ({ view, node }) => {
     if (view.cell.isNode() && view.cell.id !== BACKGROUND_ID) {
       setting.clicked = true
       const pos = graph.localToGraph(view.cell.getBBox())
@@ -93,6 +94,7 @@ function registerEvents(graph: Graph) {
         x: pos.x + bbox.width + MENU_PADDING,
         y: pos.y,
       }
+      buffer.selectedEntry = node
     }
     else {
       setting.clicked = false
@@ -179,6 +181,12 @@ function registerEvents(graph: Graph) {
       node.attr(stack[0][0], stack[0][1])
       node.attr(stack[1][0], stack[1][1])
     }
+  })
+  graph.on('node:change:position', ({ node }) => {
+    updateByUniqueID(buffer.currentData, 'bid', node.data.id, ['x', 'y'], [node.position().x, node.position().y])
+  })
+  graph.on('node:change:size', ({ node }) => {
+    updateByUniqueID(buffer.currentData, 'bid', node.data.id, ['height', 'width'], [node.size().width, node.size().height])
   })
 }
 
@@ -275,32 +283,25 @@ export function handleSelectionMove(graph: Graph) {
   }
 }
 
-export function createEntry(graph: Graph, entry: entryType) {
-  if (entry.data.type === 'bbox') {
-    graph.addNode(entry)
-    history.push(entry, config.get('curID'))
-  }
-}
-
 Bus.on('on-node-add', (graph: Graph) => {
   if (config.get('currentPGType') === 'detection')
     createBBOX(graph)
 })
 
-function createBBOX(graph: Graph) {
+function createBBOX(graph: Graph, x: number = 0, y: number = 0, height: number = 100, width: number = 100, color: string = '#6565ff', text: string = '新建标签', id: number = -1) {
   const node = {
     shape: 'rect',
     position: {
-      x: 0,
-      y: 0,
+      x,
+      y,
     },
     size: {
-      height: 100,
-      width: 100,
+      height,
+      width,
     },
     attrs: {
       rect: {
-        'fill': hexToRgba('#6565ff', 0.5),
+        'fill': hexToRgba(color, 0.5),
         'stroke': 'black',
         'strokeWidth': 1,
       },
@@ -309,21 +310,21 @@ function createBBOX(graph: Graph) {
         'fill': 'white',
         'textAnchor': 'middle',
         'textVerticalAnchor': 'middle',
-        'text': '新建标签',
+        'text': text,
       },
     },
     data: {
-      id: -1,
+      id,
       type: 'bbox',
     },
   }
-  createEntry(graph, node)
+  addNode(graph, node)
 }
 
 function initNodes(graph: Graph) {
-  const curID = config.get('curID')
-  const entry = history.getByIndex(curID)
-  if (entry) {
-
+  const currentData = buffer.currentData
+  if (currentData) {
+    for (const label of currentData)
+      createBBOX(graph, label.x, label.y, label.width, label.height, label.color, label.name, label.bid)
   }
 }

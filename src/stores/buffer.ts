@@ -1,11 +1,12 @@
-import { AnyARecord } from 'dns'
 import { defaultBufferSetting } from '~@/config/default-buffer-seting'
 import type { BufferType } from '~@/types/buffer'
-import type { AnnotationType, ImageType } from '~@/types/structure'
+import type { AnnotationType, ImageType, Label } from '~@/types/structure'
+import { Node } from '@antv/x6'
 
 interface AnnotationUpdateType {
   classification: {
     name: string
+    color: string
     id: number
   }
   detection: {
@@ -14,13 +15,18 @@ interface AnnotationUpdateType {
     w: number
     h: number
     name: string
+    color: string
     id: number
+    bid: number
   }
 }
 
 export const useBufferStore = defineStore('buffer', () => {
   const setting = reactive<BufferType>(defaultBufferSetting)
   const currentData = ref<AnnotationType>()
+  const fakeIndex = ref(-1)
+  const selectedEntry = ref<Node>()
+  const labels = ref<Label[]>([])
   function set<K extends keyof BufferType>(key: K, value: BufferType[K]) {
     setting[key] = value
   }
@@ -60,11 +66,23 @@ export const useBufferStore = defineStore('buffer', () => {
           currentData.value.id = args.id
         }
         break
+      case 'detection':
+        for (const cd of currentData.value) {
+          if (cd.bid === selectedEntry.value?.data.id) {
+            cd.name = args.name
+            cd.id = args.id
+            cd.color = args.color
+          }
+        }
+        break
     }
   }
   return {
     setting,
     currentData,
+    fakeIndex,
+    selectedEntry,
+    labels,
     set,
     get,
     initBuffer,

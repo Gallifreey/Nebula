@@ -1,15 +1,13 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script lang="ts" setup>
 import type { Graph } from '@antv/x6'
-import type { SelectProps } from 'ant-design-vue'
 import { graphInit, switchToNext } from './utils/handler'
 import LabelMenu from './components/label-menu.vue'
 import type { ImageType, PlaygroundData } from '~@/types/structure'
 import Bus from '~@/utils/bus'
-import { getValueFromObjArrays } from '~@/utils/tools'
+import { getValueByUniqueIDFromObjArray } from '~@/utils/tools'
 
 const type = ref('')
-const label = ref()
 const canvasDOM = ref()
 const config = useConfigStore()
 const buffer = useBufferStore()
@@ -18,15 +16,19 @@ let graph: Graph
 function render(container: HTMLElement) {
   return graphInit(container)
 }
-onMounted(() => {
-  graph = render(canvasDOM.value)
-})
 Bus.on('on-labels-select', (value: number, name: string, type: ImageType) => {
   switch (type) {
     case 'classification':
       buffer.updateCurrentData(-1, type, {
         name,
         id: value,
+      })
+      break
+    case 'detection':
+      buffer.updateCurrentData(-1, type, {
+        name,
+        id: value,
+        color: getValueByUniqueIDFromObjArray(buffer.labels, 'id', value, 'color'),
       })
   }
 })
@@ -37,6 +39,9 @@ Bus.on('on-update', (data: PlaygroundData['image'], t: string) => {
     width: data.width,
     height: data.height,
   })
+})
+onMounted(() => {
+  graph = render(canvasDOM.value)
 })
 </script>
 

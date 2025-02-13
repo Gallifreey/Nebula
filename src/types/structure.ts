@@ -139,4 +139,4 @@ export interface AnalyiseReport {
   entityColorCast: ChartData
 }
 
-export type AnnotationType = ImageClassificationLabel | ObjectDetectionLabel
+export type AnnotationType = ImageClassificationLabel | ObjectDetectionLabel[]

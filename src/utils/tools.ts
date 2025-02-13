@@ -202,3 +202,21 @@ export function pickeFromObject2Array<T, K extends keyof T>(obj: T[], key: K) {
   })
   return res
 }
+
+export function updateByUniqueID<T, K extends keyof T>(obj: T[], key: K, aim: T[K], target: K[], value: any[]) {
+  for (const o of obj) {
+    if (o[key] === aim) {
+      // 更新
+      for (let i = 0; i < target.length; i++)
+        o[target[i]] = value[i]
+    }
+  }
+}
+
+export function getValueByUniqueIDFromObjArray<T, K1 extends keyof T, K2 extends keyof T>(obj: T[], key: K1, aim: T[K1], target: K2) {
+  for (let i = 0; i < obj.length; i++) {
+    if (obj[i][key] === aim)
+      return obj[i][target]
+  }
+  return 'white'
+}

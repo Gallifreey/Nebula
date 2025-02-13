@@ -11,6 +11,7 @@ const id = route.query.id
 const type = route.query.type
 const labels = ref<Label[]>([])
 const config = useConfigStore()
+const buffer = useBufferStore()
 let dsid = -1
 if (typeof id === 'string') {
   dsid = Number.parseInt(id, 10)
@@ -25,6 +26,7 @@ onMounted(async () => {
     const d = (await getLabelsApi(dsid)).data
     if (d) {
       labels.value = d
+      buffer.labels = d
       Bus.emit('on-labels-update', d)
       config.set('contextMenuTitleType', type)
     }
